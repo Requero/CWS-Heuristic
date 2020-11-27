@@ -25,8 +25,8 @@ vehCaps = {
     "E-n33-k4" : 8000,
     "E-n51-k5" : 160,
     "E-n76-k7" : 220,
-    "E-n76-k10" : 141, #140,
-    "E-n76-k14" : 99, #100, # E
+    "E-n76-k10" : 140,
+    "E-n76-k14" : 100, # E
     "F-n45-k4" : 2010,
     "F-n72-k4" : 30000,
     "F-n135-k7" : 2210, # F
@@ -52,12 +52,11 @@ for filename in files:
     #replace('.txt')
     with open(filename) as instance:
         instanceCws = cws.HeuristicSequential(instanceName, instance, vehCaps[instanceName])
-        if instanceName == "E-n76-k10" or instanceName == "E-n76-k14" :
-            print(vehCaps[instanceName])
-            instanceCws.run()
-            instanceCws.printCost()
-        
-        #instanceCws.printRouteCosts()
-        #instanceCws.plotGraph()
+        #if instanceName == "E-n76-k10" or instanceName == "E-n76-k14" :
+        print(vehCaps[instanceName])
+        instanceCws.run()
+        instanceCws.printCost()
+        instanceCws.printRouteCosts()
+        instanceCws.plotGraph()
         i+=1
         
