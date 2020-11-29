@@ -42,7 +42,7 @@ vehCaps = {
     "P-n76-k5" : 280,
     "P-n101-k4" : 400 # P
     }
-i = 0
+
 dirname, f = os.path.split(os.path.abspath(__file__))
 dirname = dirname + "\\instances"
 txt_folder = Path(dirname).rglob('*.txt')
@@ -58,5 +58,4 @@ for filename in files:
         instanceCws.printCost()
         instanceCws.printRouteCosts()
         instanceCws.plotGraph()
-        i+=1
         

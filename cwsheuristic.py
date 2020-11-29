@@ -34,7 +34,19 @@ class HeuristicSequential:
     def run(self):
         self.constructEdges()
         self.constructDummySolution() 
-        self.edgeSelectionRoutingMerging()
+        biasedList = self.generateBiasedSavingsList()
+        self.edgeSelectionRoutingMerging(biasedList)
+        
+    def generateBiasedSavingsList(self):
+        beta = 0.30
+        copySavings = self.savingsList.copy()
+        biasedSavings = []
+        for i in range( len(copySavings) ):
+            index = int( math.log(random.random()) / math.log(1 - beta) )
+            index = index % len(copySavings)
+            biasedSavings.append( copySavings[index] )
+            copySavings.pop( index )
+        return biasedSavings
     
     def constructEdges(self):
         """ Construct edges with costs and savings list from self.nodes """
@@ -113,10 +125,10 @@ class HeuristicSequential:
         else: # retunr last edge in aRoute
             return aRoute.edges[-1]
     
-    def edgeSelectionRoutingMerging(self):
+    def edgeSelectionRoutingMerging(self, savingsList):
         """ Perform the edge-selection & routing-merging iterative process """
-        while len(self.savingsList) > 0: # list is not empty
-            ijEdge = self.savingsList.pop(0) # select the next edge from the list
+        while len(savingsList) > 0: # list is not empty
+            ijEdge = savingsList.pop(0) # select the next edge from the list
             # determine the nodes i < j that define the edge
             iNode = ijEdge.origin
             jNode = ijEdge.end
@@ -159,6 +171,7 @@ class HeuristicSequential:
                 # delete jRoute from emeging solution
                 self.sol.cost -= ijEdge.savings
                 self.sol.routes.remove(jRoute)
+                
     
     def printCost(self):
         print('Instance: '+ self.instanceName)
@@ -197,7 +210,7 @@ class HeuristicSequential:
                 nx.draw_networkx_edges(G, coord, edge_color='#%02x%02x%02x' % (c1,c2,c3))
                 nx.draw_networkx_labels(G, coord, font_size = 9)
                 G.remove_node(edge.origin.ID)
-        j +=1
+            j +=1
         limits=plt.axis('on') #Turn on axes)
         ax.tick_params(left=True, bottom =True, labelleft=True, labelbottom=True)
 
