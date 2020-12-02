@@ -63,6 +63,7 @@ for filename in files:
             instanceCws.run(beta)
             instanceCws.printCost()
             instanceCws.printRouteCosts()
+            #instanceCws.printBestRoutes()
             instanceCws.plotGraph()
             f.closed
         

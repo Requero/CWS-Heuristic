@@ -21,7 +21,6 @@ class HeuristicSequential:
     def __init__(self, instanceName, instance, vehCap):
         self.instanceName=instanceName
         self.vehCap = vehCap
-        self.outfile = None
         #with open(fileName) as instance:
         i = 0
         self.nodes = []
@@ -102,6 +101,9 @@ class HeuristicSequential:
             self.sol.routes.append(dndRoute) # add this  route to the solution
             self.sol.cost += dndRoute.cost
             self.sol.demand += dndRoute.demand
+            #initial bestRoutes
+            routeKey = str(0) + "_" + str(dnEdge.end.ID)
+            self.sol.bestRoutes[routeKey] = copy.deepcopy(dndRoute)
     
     def checkMergingConditions(self, iNode, jNode, iRoute, jRoute):
         # condition 1 : iRoute and jRoute  are not the  same route  object
@@ -172,6 +174,16 @@ class HeuristicSequential:
                 self.sol.cost -= ijEdge.savings
                 self.sol.routes.remove(jRoute)
                 
+                #populate bestRoutes
+                routeKey = str(0)
+                for x in iRoute.edges:
+                    routeKey += "_" + str(x.end.ID)
+                if routeKey in self.sol.bestRoutes.keys():
+                    if self.sol.bestRoutes[routeKey].cost > iRoute.cost:
+                        self.sol.bestRoutes[routeKey] = copy.deepcopy( iRoute )
+                else:
+                    self.sol.bestRoutes[routeKey] =  copy.deepcopy( iRoute )
+                
     
     def printCost(self):
         print('Instance: '+ self.instanceName)
@@ -184,6 +196,17 @@ class HeuristicSequential:
             for edge in route.edges:
                 s = s + '-' + str(edge.end.ID)
             print('Route: ' + s + ' || cost = ' + "{:{}f}".format(route.cost,2))
+    
+    def printBestRoutes(self):
+        print( "-------------------------------------" )
+        print( "Instance: " + self.instanceName )
+        for route in sorted( self.sol.bestRoutes.keys() ):
+            s = str(0)
+            for edge in self.sol.bestRoutes[route].edges:
+                s = s + '-' + str(edge.end.ID)
+            print('Route ' + str(route) + ': ' + s + ' || cost = ' + "{:{}f}".format( self.sol.bestRoutes[route].cost,2 ) )
+        
+        print( "-------------------------------------" )
     
     def plotGraph(self):
         G = nx.Graph()
