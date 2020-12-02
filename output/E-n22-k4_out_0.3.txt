@@ -1,0 +1,7 @@
+Instance: E-n22-k4
+Cost of C&W savings sol= 414.756743
+Instance: E-n22-k4
+Route: 0-8-6-1-5-2-7-9-0 || cost = 139.387606
+Route: 0-10-3-4-11-13-0 || cost = 102.577050
+Route: 0-14-16-17-15-12-0 || cost = 72.667556
+Route: 0-18-20-21-19-0 || cost = 100.124530
