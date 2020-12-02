@@ -44,6 +44,7 @@ class Solution:
         Solution.last_ID += 1
         self.ID = Solution.last_ID
         self.routes = []  # routes in this solution
+        self.bestRoutes = {} # best routes regarding cost
         self.cost = 0.0  # cost of this solution
         self.demand = 0.0 # total demand covered by this solution
         

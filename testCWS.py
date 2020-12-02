@@ -57,5 +57,6 @@ for filename in files:
         instanceCws.run()
         instanceCws.printCost()
         instanceCws.printRouteCosts()
+        #instanceCws.printBestRoutes()
         instanceCws.plotGraph()
         
