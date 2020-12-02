@@ -21,6 +21,7 @@ class HeuristicSequential:
     def __init__(self, instanceName, instance, vehCap):
         self.instanceName=instanceName
         self.vehCap = vehCap
+        self.outfile = None
         #with open(fileName) as instance:
         i = 0
         self.nodes = []
@@ -31,14 +32,13 @@ class HeuristicSequential:
             self.nodes.append(aNode)
             i += 1
 
-    def run(self):
+    def run(self, beta=0.3):
         self.constructEdges()
         self.constructDummySolution() 
-        biasedList = self.generateBiasedSavingsList()
+        biasedList = self.generateBiasedSavingsList(beta)
         self.edgeSelectionRoutingMerging(biasedList)
         
-    def generateBiasedSavingsList(self):
-        beta = 0.30
+    def generateBiasedSavingsList(self, beta):
         copySavings = self.savingsList.copy()
         biasedSavings = []
         for i in range( len(copySavings) ):
