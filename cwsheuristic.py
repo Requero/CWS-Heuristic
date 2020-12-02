@@ -1,5 +1,6 @@
 """ Clarke & Wright savings heuristic sfor the VRP """
 
+import copy
 from vrp_objects import Node, Edge, Route, Solution
 import math
 import operator
