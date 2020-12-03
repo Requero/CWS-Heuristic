@@ -3,6 +3,7 @@ from pathlib import Path
 import sys
 import cwsheuristic as cws
 import copy
+import vrp_objects as vrp
 
 vehCap = 100.0 # update vehicle capacity for each instance
 #instanceName = 'A-n80-k10' # name  of the instance
@@ -50,25 +51,40 @@ dirname = dirname + "\\instances"
 txt_folder = Path(dirname).rglob('*.txt')
 betas = [0.3,0.5,0.8] #Different betas to test differente behaviours (risky, normal, conservative)
 files = [x for x in txt_folder]
-
+i = 0
 for filename in files:
     instanceName = str(filename).replace(dirname +"\\", '').replace('_input_nodes.txt', '')
     #replace('.txt')
     with open(filename) as instance:
-        instanceCws = cws.HeuristicSequential(instanceName, instance, vehCaps[instanceName])
-        #if instanceName == "E-n76-k10" or instanceName == "E-n76-k14" :
-        for beta in betas:
-            f = open("output\\"+str(filename).split("\\")[-1].split("_")[0] + "_out_" + str(beta)+".txt","a")
-            old_stdout = sys.stdout
-            sys.stdout = f
-            
-            instanceCws.run(beta)
-            instanceCws.printCost()
-            instanceCws.printRouteCosts()
-            #instanceCws.printBestRoutes()
-            instanceCws.plotGraph()
-            
-            sys.stdout = old_stdout
-            f.close()
-        
+        if i < 1:
+            i += 1
+            instanceCws = cws.HeuristicSequential(instanceName, instance, vehCaps[instanceName])
+            #if instanceName == "E-n76-k10" or instanceName == "E-n76-k14" :
+            for beta in betas:
+                f = open("output\\"+str(filename).split("\\")[-1].split("_")[0] + "_out_" + str(beta)+".txt","a")
+                f.truncate(0)
+                old_stdout = sys.stdout
+                sys.stdout = f
+                #Ejecutamos primero la solucion básica
+                instanceCws.runCWSSol()
+                instanceCws.printCost()
+                instanceCws.printRouteCosts()
+                
+                #Ahora viene la solucion randomizada con iteraciones
+                bestSol = vrp.Solution()
+                bestSol.cost = 1000000000
+                N = 200;
+                for i in range(N):
+                    instanceCws.runRandomSol(beta)
+                    sol = instanceCws.getSolution()
+                    if sol.cost < bestSol.cost:
+                        bestSol = copy.deepcopy( sol )
+                        print( "New best sol: " + str(bestSol.cost) )
+                        
+                instanceCws.printRouteCostsBestSolution( bestSol )
+                #instanceCws.printBestRoutes()
+                instanceCws.plotGraph()
+                
+                sys.stdout = old_stdout
+                f.close()
         

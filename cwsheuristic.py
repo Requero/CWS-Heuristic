@@ -31,12 +31,31 @@ class HeuristicSequential:
             aNode = Node(i, data[0], data[1], data[2])
             self.nodes.append(aNode)
             i += 1
+        self.bestRoutes = {} # best routes regarding cost 
+        
+    def runCWSSol(self):
+        self.constructEdges()
+        self.constructDummySolution() 
+        self.edgeSelectionRoutingMerging(self.savingsList)
 
-    def run(self, beta=0.3):
+    def runRandomSol(self, beta=0.3):
         self.constructEdges()
         self.constructDummySolution() 
         biasedList = self.generateBiasedSavingsList(beta)
         self.edgeSelectionRoutingMerging(biasedList)
+        self.improveSolutionWithBestRoutesFound()
+        
+    def improveSolutionWithBestRoutesFound(self):
+        for route in self.sol.routes:
+            routeKey = str(0)
+            for edge in route.edges:
+                routeKey += "_" + str(edge.end.ID)
+            if routeKey in self.bestRoutes.keys():
+                if self.bestRoutes[routeKey].cost < route.cost:
+                    self.sol.cost -= route.cost
+                    self.sol.cost += self.bestRoutes[routeKey].cost
+                    route = self.bestRoutes[routeKey]
+            
         
     def generateBiasedSavingsList(self, beta):
         copySavings = self.savingsList.copy()
@@ -47,6 +66,9 @@ class HeuristicSequential:
             biasedSavings.append( copySavings[index] )
             copySavings.pop( index )
         return biasedSavings
+    
+    
+    
     
     def constructEdges(self):
         """ Construct edges with costs and savings list from self.nodes """
@@ -102,9 +124,10 @@ class HeuristicSequential:
             self.sol.routes.append(dndRoute) # add this  route to the solution
             self.sol.cost += dndRoute.cost
             self.sol.demand += dndRoute.demand
+            self.bestSol = copy.deepcopy( self.sol );
             #initial bestRoutes
             routeKey = str(0) + "_" + str(dnEdge.end.ID)
-            self.sol.bestRoutes[routeKey] = copy.deepcopy(dndRoute)
+            self.bestRoutes[routeKey] = copy.deepcopy(dndRoute)
     
     def checkMergingConditions(self, iNode, jNode, iRoute, jRoute):
         # condition 1 : iRoute and jRoute  are not the  same route  object
@@ -179,11 +202,11 @@ class HeuristicSequential:
                 routeKey = str(0)
                 for x in iRoute.edges:
                     routeKey += "_" + str(x.end.ID)
-                if routeKey in self.sol.bestRoutes.keys():
-                    if self.sol.bestRoutes[routeKey].cost > iRoute.cost:
-                        self.sol.bestRoutes[routeKey] = copy.deepcopy( iRoute )
+                if routeKey in self.bestRoutes.keys():
+                    if self.bestRoutes[routeKey].cost > iRoute.cost:
+                        self.bestRoutes[routeKey] = copy.deepcopy( iRoute )
                 else:
-                    self.sol.bestRoutes[routeKey] =  copy.deepcopy( iRoute )
+                    self.bestRoutes[routeKey] =  copy.deepcopy( iRoute )
                 
     
     def printCost(self):
@@ -201,13 +224,25 @@ class HeuristicSequential:
     def printBestRoutes(self):
         print( "-------------------------------------" )
         print( "Instance: " + self.instanceName )
-        for route in sorted( self.sol.bestRoutes.keys() ):
+        for route in sorted( bestRoutes.keys() ):
             s = str(0)
-            for edge in self.sol.bestRoutes[route].edges:
+            for edge in bestRoutes[route].edges:
                 s = s + '-' + str(edge.end.ID)
-            print('Route ' + str(route) + ': ' + s + ' || cost = ' + "{:{}f}".format( self.sol.bestRoutes[route].cost,2 ) )
+            print('Route ' + str(route) + ': ' + s + ' || cost = ' + "{:{}f}".format( bestRoutes[route].cost,2 ) )
         
         print( "-------------------------------------" )
+    
+    def printRouteCostsBestSolution(self, sol):
+        print('Instance: '+ self.instanceName)
+        for route in sol.routes:
+            s = str(0)
+            for edge in route.edges:
+                s = s + '-' + str(edge.end.ID)
+            print('Route: ' + s + ' || cost = ' + "{:{}f}".format(route.cost,2))
+        print( "Solution cost = " + "{:{}f}".format(sol.cost,2))
+            
+    def getSolution(self):
+        return self.sol
     
     def plotGraph(self):
         G = nx.Graph()
