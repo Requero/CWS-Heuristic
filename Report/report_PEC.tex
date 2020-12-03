@@ -1,0 +1,121 @@
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+% This is a simple template for a LaTeX document using the "article" class.
+% See "book", "report", "letter" for other types of document.
+
+\documentclass[11pt]{article} % use larger type; default would be 10pt
+
+\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+\usepackage{caption}
+\usepackage{subcaption}
+%%% Examples of Article customizations
+% These packages are optional, depending whether you want the features they provide.
+% See the LaTeX Companion or other references for full information.
+
+%%% PAGE DIMENSIONS
+\usepackage{geometry} % to change the page dimensions
+\geometry{a4paper} % or letterpaper (US) or a5paper or....
+% \geometry{margin=2in} % for example, change the margins to 2 inches all round
+% \geometry{landscape} % set up the page for landscape
+%   read geometry.pdf for detailed page layout information
+
+\usepackage{graphicx} % support the \includegraphics command and options
+
+% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+
+%%% PACKAGES
+\usepackage{booktabs} % for much better looking tables
+\usepackage{array} % for better arrays (eg matrices) in maths
+\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+% These packages are all incorporated in the memoir class to one degree or another...
+\setlength{\textwidth}{150mm}
+\setlength{\textheight}{250mm}
+\setlength{\oddsidemargin}{6mm}
+\setlength{\evensidemargin}{28mm}
+\setlength{\topmargin}{-15mm}
+%%% HEADERS & FOOTERS
+\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+\pagestyle{fancy} % options: empty , plain , fancy
+\renewcommand{\headrulewidth}{0pt} % customise the layout...
+\lhead{Aleatorización Sesgada}\chead{}\rhead{PEC2}
+\lfoot{}\cfoot{\thepage}\rfoot{}
+
+%%% SECTION TITLE APPEARANCE
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+% (This matches ConTeXt defaults)
+
+%%% ToC (table of contents) APPEARANCE
+\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+
+%%% END Article customizations
+
+%%% The "real" document content comes below...
+
+\title{Aleatorización Sesgada}
+\author{Alvarez Estarlich, Mauro \\ Requero Martín, David \\ Serrano Gómez, Enrique}
+%\date{} % Activate to display a given date or no date (if empty),
+         % otherwise the current date is printed 
+
+\begin{document}
+\maketitle
+
+\section{Resumen y Comentario}
+
+\subsection{On the use of Monte Carlo simulation, cache and splitting techniques to improve the Clarke and Wright savings heuristics (Juan, A. et. al. (2011))}
+
+El transporte por carretera es el principal modo de transporte de bienes y se necesitan modelos y métodos eficientes para ayudar en los procesos de toma de decisiones de este campo.\\[0.2cm]
+El artículo habla sobre el Capacitated Vehicle Routing Problem (CVRP) del cual el objetivo principal es encontrar la solución (viable) de mínimo coste. Además, se introduce el algoritmo probabilístico SR-GCWS-CS, con el cual quieren probar como se pueden usar los métodos basados en simulación para mejorar heurísticos existentes.\\[0.2cm]
+\textbf{El algoritmo SR-GCWS-CS}\\[0.2cm]
+Combina la simulación de Monte Carlo (MCS) con el heurístico de ahorros Clarke and Wright (CWS). Además, utiliza técnicas de “Divide y vencerás” y memoria cache de soluciones obtenidas. De esta manera, puede proveer, de manera eficiente, un conjunto de soluciones pseudo-óptimas para CVRP. \\[0.2cm]
+\textbf{Combinación de MCS con CWS}\\[0.2cm]
+Este método asigna una probabilidad sesgada, con ruido, a cada arista en la lista de ahorros de CWS. Aristas con mayores ahorros tendrán más probabilidad de ser escogidas antes para combinarse.\\[0.2cm]
+Para cada ruta generada, el mejor orden de viaje conocido entre los nodos se guarda en una especie de memoria cache. Esto se usa para mejor la calidad de generación de futuras rutas.\\[0.2cm]
+El conjunto original de nodos se divide en subconjunto disjuntos y se resuelven de manera independiente para después generar la solución global.\\[0.2cm]
+Este método híbrido ofrece ventajas sobre otros metaheurísticos:
+\renewcommand{\labelenumi}{\alph{enumi}}
+ \begin{enumerate}
+   \item) Simple.
+   \item) Metodología flexible y robusta.
+   \item) Buen rendimiento generando soluciones.
+   \item) No requiere ajustes de alta precisión.
+   \item) Se puede ejecutar en paralelo.
+ \end{enumerate}
+
+\textbf{Valoración}\\[0.2cm]
+Es un artículo bien estructurado ya que responden a la mayoría de las preguntas que alguien se podría hacer al leerlo: Qué problema hay, en que consiste, como se ha solucionado y que métodos se han utilizado anteriormente, como lo van a solucionar ellos y por qué lo hacen así, etc.\\[0.2cm]
+Aparte de la estructura, las explicaciones están bien hechas, dando contexto a cada nuevo concepto/término para utilizarlo más adelante. Además, da referencias para que el lector profundice si lo desea y es sencillo de entender.
+Hubiera sido interesante que cogieran una instancia pequeña como ejemplo y que mostraran como cambian las rutas en cada optimización añadida (CWS +MCS, CWS + MCS + Hash map, CWS + MCS + Hash map + Split ). 
+
+\subsection{The SR-GCWS hybrid algorithm for solving the capacitated vehicle routing problem. (Juan, A. et. al. (2010))}
+
+El artículo presenta un nuevo planteamiento para encontrar soluciones al “capacitated vehicle routing problem” (CVRP). Para ello introducen el concepto de Clarke and Wright Savings (CWS), que es usado para asignar una puntuación a cada arista en función del “ahorro” que supone seleccionarlo para moverse de un nodo a otro, siempre y cuando no se violen las reglas establecidas por el problema. También se añade la técnica de Monte Carlo simulation (MCS) ya que se ha visto que resulta muy útil a la hora de resolver problemas complejos mediante el uso de números aleatorios y distribuciones estadísticas.\\[0.2cm]
+Poniéndolo todo junto, para cada paso en el que se deba seleccionar una nueva arista, primero se seleccionan aquellas que tengan un mayor “ahorro” y a cada una de ellas se le asigna una probabilidad de ser seleccionada (mayor probabilidad a los que presenten un “ahorro” mayor). La probabilidad que se asignará vendrá determinada por una distribución (cuasi-) geométrica, también seleccionada de un conjunto de distribuciones posibles. En concreto, el punto clave es la generación de cientos de soluciones posibles, cada una de ellas generada a partir de una versión aleatorizada de la solución obtenida por CWS. Con todo ello, se consigue un algoritmo altamente explorativo que es capaz de mejorar los resultados obtenidos por los algoritmos más vanguardistas, dentro de un periodo de tiempo aceptable.\\[0.2cm]
+
+\textbf{Valoración}\\[0.2cm]
+
+El artículo plantea un algoritmo con claras ventajas frente a los algoritmos clásicos de optimización: es sencillo tanto en cuanto a la complejidad de programación como a las técnicas y conceptos que lo fundamentan, además no requiere de “tunning” de parámetros para obtener mejores resultados, por lo que se acorta el tiempo de experimentación para llegar a una solución subóptima pero aceptable cuando se compara con los mejores resultados obtenidos hasta la fecha. En cuanto a la redacción y la forma de presentar los diferentes conceptos, utilizando un lenguaje fácilmente comprensible, evitando un gran número de siglas y acrónimos, hace que la lectura no sea pesada y que el lector sea capaz de comprender los principales conceptos e ideas que se quieren transmitir. Queda por explorar el potencial de adaptación de esta solución para otros problemas de otros ámbitos.
+
+\clearpage
+
+\subsection{Biased Randomization of Heuristics using Skewed Probability Distributions: a survey and some applications (Grasas, A. et. al. (2017))}
+
+\clearpage
+
+{\fontsize{50}{60}\selectfont Diseño y desarrollo de un algoritmo de busqueda randomizada y heuristica CWS aplicada al VRP}
+
+\renewcommand{\labelenumi}{\arabic{enumi}}
+ \begin{enumerate}
+   \item) Introducción
+   \item) Revisión de la literatura
+   \item) Algoritmo desarrollado
+   \item) Experimento computacional y análisis de resultados
+   \item) Conclusiones y trabajo futuro
+ \end{enumerate}
+
+\end{document}
