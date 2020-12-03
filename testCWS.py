@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 import sys
 import cwsheuristic as cws
+import copy
 
 vehCap = 100.0 # update vehicle capacity for each instance
 #instanceName = 'A-n80-k10' # name  of the instance
@@ -47,7 +48,7 @@ vehCaps = {
 dirname, f = os.path.split(os.path.abspath(__file__))
 dirname = dirname + "\\instances"
 txt_folder = Path(dirname).rglob('*.txt')
-betas = [0.3,0.4] #Different betas to test
+betas = [0.3,0.5,0.8] #Different betas to test differente behaviours (risky, normal, conservative)
 files = [x for x in txt_folder]
 
 for filename in files:
@@ -56,14 +57,18 @@ for filename in files:
     with open(filename) as instance:
         instanceCws = cws.HeuristicSequential(instanceName, instance, vehCaps[instanceName])
         #if instanceName == "E-n76-k10" or instanceName == "E-n76-k14" :
-        print(vehCaps[instanceName])
         for beta in betas:
             f = open("output\\"+str(filename).split("\\")[-1].split("_")[0] + "_out_" + str(beta)+".txt","a")
+            old_stdout = sys.stdout
             sys.stdout = f
+            
             instanceCws.run(beta)
             instanceCws.printCost()
             instanceCws.printRouteCosts()
             #instanceCws.printBestRoutes()
             instanceCws.plotGraph()
-            f.closed
+            
+            sys.stdout = old_stdout
+            f.close()
+        
         
