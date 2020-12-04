@@ -45,11 +45,22 @@ class HeuristicSequential:
         self.edgeSelectionRoutingMerging(biasedList)
         self.improveSolutionWithBestRoutesFound()
         
+    def getRouteHash(self, route ):
+        routeIds = [0]
+        for edge in route.edges:
+            routeIds.append(edge.end.ID);
+        routeIds.sort()
+        
+        routeKey = str(0)
+        for x in routeIds[1:]:
+            routeKey += "_" + str(x)
+            
+        return routeKey
+        
     def improveSolutionWithBestRoutesFound(self):
         for route in self.sol.routes:
-            routeKey = str(0)
-            for edge in route.edges:
-                routeKey += "_" + str(edge.end.ID)
+            routeKey = self.getRouteHash( route )
+        
             if routeKey in self.bestRoutes.keys():
                 if self.bestRoutes[routeKey].cost < route.cost:
                     self.sol.cost -= route.cost
@@ -66,8 +77,6 @@ class HeuristicSequential:
             biasedSavings.append( copySavings[index] )
             copySavings.pop( index )
         return biasedSavings
-    
-    
     
     
     def constructEdges(self):
@@ -126,6 +135,8 @@ class HeuristicSequential:
             self.sol.demand += dndRoute.demand
             self.bestSol = copy.deepcopy( self.sol );
             #initial bestRoutes
+            routeIds = [0, dnEdge.end.ID]
+            routeIds.sort();
             routeKey = str(0) + "_" + str(dnEdge.end.ID)
             self.bestRoutes[routeKey] = copy.deepcopy(dndRoute)
     
@@ -199,19 +210,25 @@ class HeuristicSequential:
                 self.sol.routes.remove(jRoute)
                 
                 #populate bestRoutes
-                routeKey = str(0)
-                for x in iRoute.edges:
-                    routeKey += "_" + str(x.end.ID)
+                #create hash to search for the route
+                routeKey = self.getRouteHash( iRoute )
+                    
                 if routeKey in self.bestRoutes.keys():
                     if self.bestRoutes[routeKey].cost > iRoute.cost:
                         self.bestRoutes[routeKey] = copy.deepcopy( iRoute )
                 else:
                     self.bestRoutes[routeKey] =  copy.deepcopy( iRoute )
-                
+  
     
     def printCost(self):
         print('Instance: '+ self.instanceName)
         print('Cost of C&W savings sol=', "{:{}f}".format(self.sol.cost, 2))
+        
+    def printRoute(self, route):
+        s = str(0)
+        for edge in route.edges:
+            s = s + '-' + str(edge.end.ID)
+        print('Route: ' + s + ' || cost = ' + "{:{}f}".format(route.cost,2))
     
     def printRouteCosts(self):
         print('Instance: '+ self.instanceName)
@@ -224,11 +241,11 @@ class HeuristicSequential:
     def printBestRoutes(self):
         print( "-------------------------------------" )
         print( "Instance: " + self.instanceName )
-        for route in sorted( bestRoutes.keys() ):
+        for route in sorted( self.bestRoutes.keys() ):
             s = str(0)
-            for edge in bestRoutes[route].edges:
+            for edge in self.bestRoutes[route].edges:
                 s = s + '-' + str(edge.end.ID)
-            print('Route ' + str(route) + ': ' + s + ' || cost = ' + "{:{}f}".format( bestRoutes[route].cost,2 ) )
+            print('Route ' + str(route) + ': ' + s + ' || cost = ' + "{:{}f}".format( self.bestRoutes[route].cost,2 ) )
         
         print( "-------------------------------------" )
     
