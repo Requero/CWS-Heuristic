@@ -32,19 +32,93 @@ class HeuristicSequential:
             self.nodes.append(aNode)
             i += 1
         self.bestRoutes = {} # best routes regarding cost 
+        self.sol = Solution()
         
     def runCWSSol(self):
-        self.constructEdges()
-        self.constructDummySolution() 
+        self.constructEdges(self.nodes)
+        self.constructDummySolution(self.nodes) 
         self.edgeSelectionRoutingMerging(self.savingsList)
 
     def runRandomSol(self, beta=0.3):
-        self.constructEdges()
-        self.constructDummySolution() 
+        self.constructEdges(self.nodes)
+        self.constructDummySolution(self.nodes) 
         biasedList = self.generateBiasedSavingsList(beta)
         self.edgeSelectionRoutingMerging(biasedList)
         self.improveSolutionWithBestRoutesFound()
+
+    def runSplittingSol(self, splittingType="TopBottom"):
+        splittingTypes = ['TopBottom', 'LeftRight', "Cross", "Star"]
+        if splittingType not in splittingTypes:
+            raise ValueError("Invalid sim type. Expected one of: %s" % splittingTypes)
+        if splittingType == "TopBottom":
+            splt_Nodes = self.splitTopBottomNodes()
+        if splittingType == "LeftRight":
+            splt_Nodes = self.splitLeftRightNodes()
+        if splittingType == "Cross":
+            splt_Nodes = self.splitCrossNodes()
+        if splittingType == "Star": #8 cuadrants
+            splt_Nodes = self.splitStarNodes()
+        for splt_node in splt_Nodes:
+            self.constructEdges(splt_node)
+            self.constructDummySolution(splt_node) 
+            self.edgeSelectionRoutingMerging(self.savingsList)
+
+    def splitTopBottomNodes(self): #Split the nodes depending on their position with respect to the Y axis.
+        splitted_nodes = [[self.nodes[0]], [self.nodes[0]]] #Depot node is included in both splitted lists
+        for node in self.nodes[1:]:
+            if node.y >= 0: #Positive Y nodes will be added to the first list
+                splitted_nodes[0].append(node)
+            else: #Negative Y nodes will be added to the second list
+                splitted_nodes[1].append(node)
+        return splitted_nodes
+
+    def splitLeftRightNodes(self): #Split the nodes depending on their position with respect to the X axis.
+        splitted_nodes = [[self.nodes[0]], [self.nodes[0]]] #Depot node is included in both splitted lists
+        for node in self.nodes[1:]:
+            if node.x >= 0: #Positive X nodes will be added to the first list
+                splitted_nodes[0].append(node)
+            else: #Negative X nodes will be added to the second list
+                splitted_nodes[1].append(node)
+        return splitted_nodes
         
+    def splitCrossNodes(self): #Split the nodes depending on their position with respect to the X  and Y axis.
+        splitted_nodes = [[self.nodes[0]], [self.nodes[0]], [self.nodes[0]], [self.nodes[0]]]#Depot node is included in all splitted lists
+        for node in self.nodes[1:]:
+            if node.x >= 0 and node.y >=0: #Positive cuadrant nodes will be added to the first list
+                splitted_nodes[0].append(node)
+            if node.x >= 0 and node.y < 0: #Positive X and negative Y nodes will be added to the second list
+                splitted_nodes[1].append(node)
+            if node.x < 0 and node.y < 0: #Negative X and negative Y nodes will be added to the third list
+                splitted_nodes[2].append(node)
+            if node.x < 0 and node.y >=0: #Negative X and positive Y nodes will be added to the forth list
+                splitted_nodes[3].append(node)
+        return splitted_nodes
+
+    def splitStarNodes(self): 
+        splitted_nodes = [[self.nodes[0]], [self.nodes[0]], [self.nodes[0]], [self.nodes[0]], [self.nodes[0]], [self.nodes[0]], [self.nodes[0]], [self.nodes[0]]] #Depot node is included in all splitted lists
+        for node in self.nodes[1:]:
+            if node.x >= 0 and node.y >=0: #Positive cuadrant
+                if node.x >= node.y:
+                    splitted_nodes[0].append(node)
+                else:
+                    splitted_nodes[1].append(node)
+            if node.x >= 0 and node.y < 0: #Positive X and negative Y
+                if abs(node.x) >= abs(node.y):
+                    splitted_nodes[2].append(node)
+                else:
+                    splitted_nodes[3].append(node)
+            if node.x < 0 and node.y < 0: #Negative X and negative Y
+                if abs(node.x) >= abs(node.y):
+                    splitted_nodes[4].append(node)
+                else:
+                    splitted_nodes[5].append(node)
+            if node.x < 0 and node.y >=0: #Negative X and positive Y
+                if abs(node.x) >= abs(node.y):
+                    splitted_nodes[6].append(node)
+                else:
+                    splitted_nodes[7].append(node)
+        return splitted_nodes
+
     def getRouteHash(self, route ):
         routeIds = [0]
         for edge in route.edges:
@@ -79,11 +153,11 @@ class HeuristicSequential:
         return biasedSavings
     
     
-    def constructEdges(self):
+    def constructEdges(self, nodes):
         """ Construct edges with costs and savings list from self.nodes """
-        self.depot = self.nodes[0] # node 0 is self.depot
+        self.depot = nodes[0] # node 0 is self.depot
         
-        for node in self.nodes[1:]: # excludes the self.depot
+        for node in nodes[1:]: # excludes the self.depot
             dnEdge = Edge(self.depot, node) # creates the (self.depot, node) edge (arc)
             ndEdge = Edge(node, self.depot)
             dnEdge.invEdge = ndEdge # sets the inverse edge (arc)
@@ -96,10 +170,10 @@ class HeuristicSequential:
             node.ndEdge = ndEdge
         
         self.savingsList = []
-        for i in range(1, len(self.nodes) - 1): # excludes the self.depot
-            iNode = self.nodes[i]
-            for j in range(i + 1, len(self.nodes)):
-                jNode = self.nodes[j]
+        for i in range(1, len(nodes) - 1): # excludes the self.depot
+            iNode = nodes[i]
+            for j in range(i + 1, len(nodes)):
+                jNode = nodes[j]
                 ijEdge = Edge(iNode, jNode) # creates the (i, j) edge
                 jiEdge = Edge(jNode, iNode)
                 ijEdge.invEdge = jiEdge # sets the inverse edge (arc)
@@ -115,11 +189,9 @@ class HeuristicSequential:
         # sort the list of edges from higher to lower savings
         self.savingsList.sort(key = operator.attrgetter("savings"), reverse = True)
     
-    def constructDummySolution(self):
+    def constructDummySolution(self, nodes):
         """ Construct the dummy solution """
-
-        self.sol = Solution()
-        for node in self.nodes[1:]: # excludes the self.depot
+        for node in nodes[1:]: # excludes the self.depot
             dnEdge = node.dnEdge # get the(self.depot, node) edge
             ndEdge = node.ndEdge
             dndRoute = Route() # construct the route (self.depot, node, self.depot)
@@ -145,7 +217,7 @@ class HeuristicSequential:
         if iRoute == jRoute: return False
         # conditions 2: both nodes are exteriornodes in their respective routes
         if iNode.isInterior == True or jNode.isInterior == True: return False
-        # condition 3: demand after merging can be covered by a siingle vehicle
+        # condition 3: demand after merging can be covered by a single vehicle
         if self.vehCap < iRoute.demand + jRoute.demand: return False
         # else, merging is feasible
         return True
@@ -289,6 +361,7 @@ class HeuristicSequential:
             j +=1
         limits=plt.axis('on') #Turn on axes)
         ax.tick_params(left=True, bottom =True, labelleft=True, labelbottom=True)
+        plt.show()
 
 
 

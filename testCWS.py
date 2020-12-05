@@ -49,17 +49,17 @@ vehCaps = {
 dirname, f = os.path.split(os.path.abspath(__file__))
 dirname = dirname + "\\instances"
 txt_folder = Path(dirname).rglob('*.txt')
-betas = [0.3,0.5,0.8] #Different betas to test differente behaviours (risky, normal, conservative)
+betas = [0.3] #Different betas to test differente behaviours (risky, normal, conservative)
 files = [x for x in txt_folder]
 i = 0
-for filename in files:
+for filename in files:  
     instanceName = str(filename).replace(dirname +"\\", '').replace('_input_nodes.txt', '')
     #replace('.txt')
     with open(filename) as instance:
         if i < 1:
             i += 1
             instanceCws = cws.HeuristicSequential(instanceName, instance, vehCaps[instanceName])
-            #if instanceName == "E-n76-k10" or instanceName == "E-n76-k14" :
+            # if instanceName == "E-n76-k10" or instanceName == "E-n76-k14" :
             for beta in betas:
                 f = open("output\\"+str(filename).split("\\")[-1].split("_")[0] + "_out_" + str(beta)+".txt","a")
                 f.truncate(0)
@@ -67,6 +67,7 @@ for filename in files:
                 sys.stdout = f
                 #Ejecutamos primero la solucion básica
                 instanceCws.runCWSSol()
+                #instanceCws.runSplittingSol("Star")
                 instanceCws.printCost()
                 instanceCws.printRouteCosts()
                 
@@ -87,4 +88,3 @@ for filename in files:
                 
                 sys.stdout = old_stdout
                 f.close()
-        
