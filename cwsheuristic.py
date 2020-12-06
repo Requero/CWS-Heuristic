@@ -19,33 +19,31 @@ class HeuristicSequential:
     # savingsList
     # sol 
     
-    def __init__(self, instanceName, instance, vehCap):
+    def __init__(self, instanceName, nodeMatrix, vehCap):
         self.instanceName=instanceName
         self.vehCap = vehCap
         #with open(fileName) as instance:
         i = 0
         self.nodes = []
-        for line in instance:
+        for nodeData in nodeMatrix:
             # array  data with node data: x, y, demand
-            data = [float(x) for x in line.split()]
-            aNode = Node(i, data[0], data[1], data[2])
+            aNode = Node(nodeData[0], nodeData[1], nodeData[2], nodeData[3])
             self.nodes.append(aNode)
-            i += 1
         self.bestRoutes = {} # best routes regarding cost 
         self.enabledRouteCacheUsage = False
+        
+    def startInstance(self):
+        self.constructEdges(self.nodes)
+        self.sol = Solution()
         
     def enableRCU(self):
         self.enabledRouteCacheUsage = True
         
     def runCWSSol(self):
-        self.constructEdges(self.nodes)
-        self.sol = Solution()
         self.constructDummySolution(self.nodes) 
         self.edgeSelectionRoutingMerging(self.savingsList)
 
     def runRandomSol(self, beta=0.3):
-        self.constructEdges(self.nodes)
-        self.sol = Solution()
         self.constructDummySolution(self.nodes) 
         biasedList = self.generateBiasedSavingsList(beta)
         self.edgeSelectionRoutingMerging(biasedList)
@@ -309,6 +307,8 @@ class HeuristicSequential:
                     else:
                         self.bestRoutes[routeKey] =  copy.deepcopy( iRoute )
   
+    def getCost(self):
+        return self.sol.cost
     
     def printCost(self):
         print('Instance: '+ self.instanceName)
