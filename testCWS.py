@@ -4,6 +4,7 @@ import sys
 import cwsheuristic as cws
 import copy
 import vrp_objects as vrp
+import time
 
 vehCap = 100.0 # update vehicle capacity for each instance
 #instanceName = 'A-n80-k10' # name  of the instance
@@ -46,45 +47,117 @@ vehCaps = {
     "P-n101-k4" : 400 # P
     }
 
+def testBiasedStart(nIterations, beta):
+    
+    bestSol = vrp.Solution()
+    bestSol.cost = 1000000000
+    startTime = time.time()
+    for iteration in range(nIterations):
+        instanceCws.runRandomSol(beta)
+        sol = instanceCws.getSolution()
+        if sol.cost < bestSol.cost:
+            bestSol = copy.deepcopy( sol )
+            print( "New best sol: " + str(bestSol.cost) )
+            
+    print( "Done in [" + "{:{}f}".format( (time.time() - startTime),2) + "s]" )
+    
+    instanceCws.printRouteCostsBestSolution( bestSol )
+    instanceCws.plotGraph()
+    
+    
+def testBiasedStartWithRouteCache(nIterations, beta):
+    
+    instanceCws.enableRCU()
+    bestSol = vrp.Solution()
+    bestSol.cost = 1000000000
+    startTime = time.time()
+    for iteration in range(nIterations):
+        instanceCws.runRandomSol(beta)
+        sol = instanceCws.getSolution()
+        if sol.cost < bestSol.cost:
+            bestSol = copy.deepcopy( sol )
+            print( "New best sol: " + str(bestSol.cost) )
+    
+    print( "Done in [" + "{:{}f}".format( (time.time() - startTime),2) + "s]" )
+    instanceCws.printRouteCostsBestSolution( bestSol )
+    instanceCws.plotGraph()
+    
+    
+def testBiasedStartWithSplittingTechniques(nIterations, beta):
+
+    splittingTypes = ['TopBottom', 'LeftRight', "Cross", "Star"]
+    for split in splittingTypes:
+        print( "----------" + split + "----------" )
+        bestSol = vrp.Solution()
+        bestSol.cost = 1000000000
+        startTime = time.time()
+        for iteration in range(nIterations):
+            instanceCws.runSplittingSol(beta, split)
+            sol = instanceCws.getSolution()
+            if sol.cost < bestSol.cost:
+                bestSol = copy.deepcopy( sol )
+                print( "New best solution: " + str(bestSol.cost) )
+                
+        print( "Done in [" + "{:{}f}".format( (time.time() - startTime),2) + "s]" )
+        instanceCws.printRouteCostsBestSolution( bestSol )
+        instanceCws.plotGraph()
+    
+    
+def testBiasedStartWithSplittingTechniquesAndRouteCache(nIterations, beta):
+    
+    instanceCws.enableRCU()
+    splittingTypes = ['TopBottom', 'LeftRight', "Cross", "Star"]
+    for split in splittingTypes:
+        print( "----------" + split + "----------" )
+        bestSol = vrp.Solution()
+        bestSol.cost = 1000000000
+        startTime = time.time()
+        for iteration in range(nIterations):
+            instanceCws.runSplittingSol(beta, split)
+            sol = instanceCws.getSolution()
+            if sol.cost < bestSol.cost:
+                bestSol = copy.deepcopy( sol )
+                print( "New best solution: " + str(bestSol.cost) )
+        
+        print( "Done in [" + "{:{}f}".format( (time.time() - startTime),2) + "s]" )
+        instanceCws.printRouteCostsBestSolution( bestSol )
+        instanceCws.plotGraph()
+        
+        
+
 dirname, f = os.path.split(os.path.abspath(__file__))
 dirname = dirname + "\\instances"
 txt_folder = Path(dirname).rglob('*.txt')
-betas = [0.3] #Different betas to test differente behaviours (risky, normal, conservative)
+betas = [0.3, 0.5, 0.8] #Different betas to test differente behaviours (risky, normal, conservative)
 files = [x for x in txt_folder]
-i = 0
+
 for filename in files:  
     instanceName = str(filename).replace(dirname +"\\", '').replace('_input_nodes.txt', '')
     #replace('.txt')
     with open(filename) as instance:
-        if i < 1:
-            i += 1
-            instanceCws = cws.HeuristicSequential(instanceName, instance, vehCaps[instanceName])
-            # if instanceName == "E-n76-k10" or instanceName == "E-n76-k14" :
-            for beta in betas:
-                f = open("output\\"+str(filename).split("\\")[-1].split("_")[0] + "_out_" + str(beta)+".txt","a")
-                f.truncate(0)
-                old_stdout = sys.stdout
-                sys.stdout = f
-                #Ejecutamos primero la solucion básica
-                instanceCws.runCWSSol()
-                #instanceCws.runSplittingSol("Star")
-                instanceCws.printCost()
-                instanceCws.printRouteCosts()
-                
-                #Ahora viene la solucion randomizada con iteraciones
-                bestSol = vrp.Solution()
-                bestSol.cost = 1000000000
-                N = 200;
-                for i in range(N):
-                    instanceCws.runRandomSol(beta)
-                    sol = instanceCws.getSolution()
-                    if sol.cost < bestSol.cost:
-                        bestSol = copy.deepcopy( sol )
-                        print( "New best sol: " + str(bestSol.cost) )
-                        
-                instanceCws.printRouteCostsBestSolution( bestSol )
-                #instanceCws.printBestRoutes()
-                instanceCws.plotGraph()
-                
-                sys.stdout = old_stdout
-                f.close()
+        instanceCws = cws.HeuristicSequential(instanceName, instance, vehCaps[instanceName])
+        # if instanceName == "E-n76-k10" or instanceName == "E-n76-k14" :
+        for beta in betas:
+            f = open("output\\"+str(filename).split("\\")[-1].split("_")[0] + "_out_" + str(beta)+".txt","a")
+            f.truncate(0)
+            old_stdout = sys.stdout
+            sys.stdout = f
+            
+            #Ejecutamos primero la solucion básica
+            startTime = time.time()
+            instanceCws.runCWSSol()
+            print( "Done in [" + "{:{}f}".format( (time.time() - startTime),2) + "s]" )
+            instanceCws.printCost()
+            instanceCws.printRouteCosts()
+            
+            
+            N = 100;
+            #Comentad todas las funciones menos el test que vayais a correr
+            testBiasedStart(N, beta)
+            #testBiasedStartWithRouteCache(N, beta)
+            #testBiasedStartWithSplittingTechniques(N, beta)
+            #testBiasedStartWithSplittingTechniquesAndRouteCache(N, beta)
+            
+            sys.stdout = old_stdout
+            f.close()
+        

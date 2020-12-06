@@ -32,21 +32,28 @@ class HeuristicSequential:
             self.nodes.append(aNode)
             i += 1
         self.bestRoutes = {} # best routes regarding cost 
-        self.sol = Solution()
+        self.enabledRouteCacheUsage = False
+        
+    def enableRCU(self):
+        self.enabledRouteCacheUsage = True
         
     def runCWSSol(self):
         self.constructEdges(self.nodes)
+        self.sol = Solution()
         self.constructDummySolution(self.nodes) 
         self.edgeSelectionRoutingMerging(self.savingsList)
 
     def runRandomSol(self, beta=0.3):
         self.constructEdges(self.nodes)
+        self.sol = Solution()
         self.constructDummySolution(self.nodes) 
         biasedList = self.generateBiasedSavingsList(beta)
         self.edgeSelectionRoutingMerging(biasedList)
-        self.improveSolutionWithBestRoutesFound()
+        
+        if( self.enabledRouteCacheUsage ):
+            self.improveSolutionWithBestRoutesFound()
 
-    def runSplittingSol(self, splittingType="TopBottom"):
+    def runSplittingSol(self, beta=0.3, splittingType="TopBottom" ):
         splittingTypes = ['TopBottom', 'LeftRight', "Cross", "Star"]
         if splittingType not in splittingTypes:
             raise ValueError("Invalid sim type. Expected one of: %s" % splittingTypes)
@@ -58,10 +65,17 @@ class HeuristicSequential:
             splt_Nodes = self.splitCrossNodes()
         if splittingType == "Star": #8 cuadrants
             splt_Nodes = self.splitStarNodes()
+            
+        self.sol = Solution()
         for splt_node in splt_Nodes:
+            self.bestRoutes = {}
             self.constructEdges(splt_node)
-            self.constructDummySolution(splt_node) 
-            self.edgeSelectionRoutingMerging(self.savingsList)
+            self.constructDummySolution(splt_node)
+            biasedList = self.generateBiasedSavingsList(beta)
+            self.edgeSelectionRoutingMerging(biasedList)
+            
+            if( self.enabledRouteCacheUsage ):
+                self.improveSolutionWithBestRoutesFound()
 
     def splitTopBottomNodes(self): #Split the nodes depending on their position with respect to the Y axis.
         splitted_nodes = [[self.nodes[0]], [self.nodes[0]]] #Depot node is included in both splitted lists
@@ -191,6 +205,7 @@ class HeuristicSequential:
     
     def constructDummySolution(self, nodes):
         """ Construct the dummy solution """
+        
         for node in nodes[1:]: # excludes the self.depot
             dnEdge = node.dnEdge # get the(self.depot, node) edge
             ndEdge = node.ndEdge
@@ -205,12 +220,14 @@ class HeuristicSequential:
             self.sol.routes.append(dndRoute) # add this  route to the solution
             self.sol.cost += dndRoute.cost
             self.sol.demand += dndRoute.demand
-            self.bestSol = copy.deepcopy( self.sol );
-            #initial bestRoutes
-            routeIds = [0, dnEdge.end.ID]
-            routeIds.sort();
-            routeKey = str(0) + "_" + str(dnEdge.end.ID)
-            self.bestRoutes[routeKey] = copy.deepcopy(dndRoute)
+            
+            if( self.enabledRouteCacheUsage ):
+                self.bestSol = copy.deepcopy( self.sol );
+                #initial bestRoutes
+                routeIds = [0, dnEdge.end.ID]
+                routeIds.sort();
+                routeKey = str(0) + "_" + str(dnEdge.end.ID)
+                self.bestRoutes[routeKey] = copy.deepcopy(dndRoute)
     
     def checkMergingConditions(self, iNode, jNode, iRoute, jRoute):
         # condition 1 : iRoute and jRoute  are not the  same route  object
@@ -282,14 +299,15 @@ class HeuristicSequential:
                 self.sol.routes.remove(jRoute)
                 
                 #populate bestRoutes
-                #create hash to search for the route
-                routeKey = self.getRouteHash( iRoute )
-                    
-                if routeKey in self.bestRoutes.keys():
-                    if self.bestRoutes[routeKey].cost > iRoute.cost:
-                        self.bestRoutes[routeKey] = copy.deepcopy( iRoute )
-                else:
-                    self.bestRoutes[routeKey] =  copy.deepcopy( iRoute )
+                if( self.enabledRouteCacheUsage ):
+                    #create hash to search for the route
+                    routeKey = self.getRouteHash( iRoute )
+                        
+                    if routeKey in self.bestRoutes.keys():
+                        if self.bestRoutes[routeKey].cost > iRoute.cost:
+                            self.bestRoutes[routeKey] = copy.deepcopy( iRoute )
+                    else:
+                        self.bestRoutes[routeKey] =  copy.deepcopy( iRoute )
   
     
     def printCost(self):
