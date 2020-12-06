@@ -67,7 +67,7 @@
 
 \section{Resumen y Comentario}
 
-\subsection{On the use of Monte Carlo simulation, cache and splitting techniques to improve the Clarke and Wright savings heuristics (Juan, A. et. al. (2011))}
+\subsection{On the use of Monte Carlo simulation, cache and splitting techniques to improve the Clarke and Wright Savings heuristics (Juan, A. et. al. (2011))}
 
 El transporte por carretera es el principal modo de transporte de bienes y se necesitan modelos y métodos eficientes para ayudar en los procesos de toma de decisiones de este campo.\\[0.2cm]
 El artículo habla sobre el Capacitated Vehicle Routing Problem (CVRP) del cual el objetivo principal es encontrar la solución (viable) de mínimo coste. Además, se introduce el algoritmo probabilístico SR-GCWS-CS, con el cual quieren probar como se pueden usar los métodos basados en simulación para mejorar heurísticos existentes.\\[0.2cm]
@@ -89,8 +89,7 @@ Este método híbrido ofrece ventajas sobre otros metaheurísticos:
 
 \textbf{Valoración}\\[0.2cm]
 Es un artículo bien estructurado ya que responden a la mayoría de las preguntas que alguien se podría hacer al leerlo: Qué problema hay, en que consiste, como se ha solucionado y que métodos se han utilizado anteriormente, como lo van a solucionar ellos y por qué lo hacen así, etc.\\[0.2cm]
-Aparte de la estructura, las explicaciones están bien hechas, dando contexto a cada nuevo concepto/término para utilizarlo más adelante. Además, da referencias para que el lector profundice si lo desea y es sencillo de entender.
-Hubiera sido interesante que cogieran una instancia pequeña como ejemplo y que mostraran como cambian las rutas en cada optimización añadida (CWS +MCS, CWS + MCS + Hash map, CWS + MCS + Hash map + Split ). 
+Aparte de la estructura, las explicaciones están bien hechas, dando contexto a cada nuevo concepto/término para utilizarlo más adelante. Además, da referencias para que el lector profundice si lo desea y es sencillo de entender. Hubiera sido interesante que cogieran una instancia pequeña como ejemplo y que mostraran como cambian las rutas en cada optimización añadida (CWS +MCS, CWS + MCS + Hash map, CWS + MCS + Hash map + Split ). 
 
 \subsection{The SR-GCWS hybrid algorithm for solving the capacitated vehicle routing problem. (Juan, A. et. al. (2010))}
 
@@ -105,17 +104,37 @@ El artículo plantea un algoritmo con claras ventajas frente a los algoritmos cl
 
 \subsection{Biased Randomization of Heuristics using Skewed Probability Distributions: a survey and some applications (Grasas, A. et. al. (2017))}
 
+La aleatorización sesgada (BRP) se platea como una solución al problema de obtener algoritmos más exploratorios que permitan obtener soluciones a lo largo de todo el dominio del problema, fuera del intervalo situado en torno a un óptimo local. Se puede implementar empleando funciones empíricas o a través del uso de uso de distribuciones de probabilidad sesgadas. El primer caso se basa en una función sesgada con un criterio que asigna un peso a cada candidato, a partir de los cuales se genera una distribución de probabilidad empírica. Sin embargo, el segundo caso presenta dos ventajas fundamentales: las distribuciones de probabilidad teóricas suelen ser función de un único parámetro fácilmente definible y se disponen de fórmulas analíticas para la obtención sus valores, que son más eficientes a nivel computacional al evitar el uso de bucles. La variación de dicho parámetro a partir de sus dos valores extremos permite obtener una selección más aleatoria o más sesgada. Empleando paralelización se pueden obtener numerosas soluciones candidato, lo cual resulta beneficioso para aplicaciones en las que le tiempo es un factor crítico. Se han implementado de forma experimental en cinco problemas de optimización con heurísticas constructivas (VRP, ARP, PFSP, UFLP, y 2DSPP). Se obtienen mejores resultados a mayor tiempo de ejecución y mayor número de agentes en paralelo. Además, se observa una mejora en los resultados frente a la heurística original, y en comparación con la aleatorización uniforme, donde se obtiene un resultado bastante deficiente en la mayoría de casos. \\[0.2cm]
+
+\textbf{Valoración}\\[0.2cm]
+
+Al tratar de evitar que los resultados obtenidos estén atrapados el entorno de un óptimo local, se corre el riesgo de que el proceso de selección aleatoria empleado descarte soluciones candidato plenamente válidas. El empleo de distribuciones estadísticas sesgadas se plantea como solución computacionalmente eficiente al combinar en una única función una fuente de aleatoriedad y de sesgo. Principalmente se han probado las distribuciones triangular y geométrica, aunque la gran variedad de distribuciones no simétricas permitirá implementar la opción más adecuada para el caso en cuestión, ya que las distintas distribuciones ofrecen distintos grados de asimetría y de dispersión de los valores. Es destable que este procedimiento se puede aplicar a heurísticas de problemas de muy diversa índole, en general con resultados óptimos. Por último, el empleo de técnicas de paralelismo con tal de aumentar su rendimiento permitirá aprovechar las últimas tecnologías de computación distribuida.
+
 \clearpage
 
 {\fontsize{50}{60}\selectfont Diseño y desarrollo de un algoritmo de busqueda randomizada y heuristica CWS aplicada al VRP}
 
 \renewcommand{\labelenumi}{\arabic{enumi}}
  \begin{enumerate}
-   \item) Introducción
-   \item) Revisión de la literatura
-   \item) Algoritmo desarrollado
-   \item) Experimento computacional y análisis de resultados
-   \item) Conclusiones y trabajo futuro
+   \item) \textbf{Introducción}\\[0.2cm]
+El problema del rutaje de vehiculos (VRP de sus siglas en inglés) se centra en la busqueda del mejor conjunto de rutas por las que guiar a una flota de vehiculos de mercancias cuyo deber es abastecer a los clientes. Pero el problema puede ser planteado con diferentes grados de complejidad en funcion de las restricciones y detalles que se quieran considerar con tal de asemejar el sistema cada vez mas al mundo real. Las principales restricciones que se aplican al VRP se basan en:
+   \begin{itemize}
+       \item El uso de vehiculos con una capacidad finita en cuanto al transporte de mercancias.
+       \item Que los vehiculos no pueden visitar dos veces un mismo cliente en su ruta de reparto.
+       \item La presencia de un almacen desde del que todos los vehiculos salen y al que deben volver tras el reparto.
+   \end{itemize} 
+El VRP tiene un gran interes tanto por los beneficios económicos que puede reportar, asi como por los beneficios ecológicos que se pueden deducir del mismo.
+   \item) \textbf{Revisión de la literatura}\\[0.2cm]
+Para el desarrollo de nuestro algoritmo nos hemos basado en la revision de tres articulos: Juan, A. et. al. (2010) (1), Juan, A. et. al. (2011) (2) y Grasas, A. et. al. (2017) (3).\\
+En el primer trabajo (1) demuestra como el uso de Clarke and Wright Savings (CWS) y simulaciones de Monte Carlo (MCS) favorecen la busqueda de soluciones con un menor "coste" y además se introduce el uso de funciones (cuasi-) geométricas para la asignación de probabilidades a los candidatos a mejor ruta. Con este enfoque se consigue que el mejor canidato pueda o no ser elegido, ya que se le asigna una probabilidad (mas elevada en funcion de la calidad de la solución) para que sea o no seleccionado.\\
+En el segundo articulo (2) del mismo autor, a parte de la técnicas descritas anteriormente se añade el concepto de "splitting", basado en el principio de "divide y vencerás", por el cual se subdivide el conjunto de nodos en subgrupos para ser procesados de manera independiente y después unir las diferentes subsoluciones obtenidas en una solución única. Grácias a este planteamiento se consigue obtener soluciones donde las rutas se cruzan con menor frecuencia, es simple y permite ser ejecutado en paralelo.\\
+En el articulo más reciente (3), se plantea el uso de la aleatorización sesgada como medida para obtener un algoritmo más explorativo, permitiendo obtener soluciones a lo largo de todo el dominio del problema. Para ello se plantean dos maneras de obtener distribuciones de probabilidad sesgadas, la primera basada en la obtención empirica y la segunda (y preferida) la basada en distribuciones teóricas generadas a partir de funciones matemáticas. Esta segunda opción es más rápida a nivel computacional y configurable a partir de los parametros que definen la función de distribución.
+
+\clearpage
+
+   \item) \textbf{Algoritmo desarrollado}\\[0.2cm]
+   \item) \textbf{Experimento computacional y análisis de resultados}\\[0.2cm]
+   \item) \textbf{Conclusiones y trabajo futuro}\\[0.2cm]
  \end{enumerate}
 
 \end{document}
