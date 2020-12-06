@@ -133,6 +133,88 @@ En el articulo más reciente (3), se plantea el uso de la aleatorización sesgad
 \clearpage
 
    \item) \textbf{Algoritmo desarrollado}\\[0.2cm]
+A partir del algoritmo \textit{Clarke and Wright Savings} (CWS) hemos añadido 3 métodos que pueden ser independientes y combinados unos con otros, para mejorar la solución inicial que nos proporciona el algoritmo básico.
+\begin{itemize}
+\item Inicio sesgado.
+\item Método de aprendizaje utilizando una memoria de rutas.
+\item Método “Divide y vencerás”.
+\end{itemize}
+El algoritmo básico tiene 3 fases:
+\renewcommand{\labelenumii}{\arabic{enumii}}
+\begin{enumerate}
+\item Construir las aristas entre los nodos, calculando un coste asociado al movimiento entre nodos, este coste se usa como concepto de ahorro. Se genera una lista ordenada de las aristas que suponen mayor ahorro a menos ahorro.
+\item Construir una solución inicial con rutas desde el nodo inicial al nodo destino, solución que no es eficiente, pero es el punto de partida para ejecutar el siguiente paso.
+\item Se itera la lista de aristas creada y se comprueba si es factible fusionar las rutas que hay desde el nodo inicial a cada nodo en los extremos de la arista. Al fusionar las rutas se consigue ahorrar costes y se empieza intentando fusionar las rutas mas costosas (que producen más ahorro).
+\end{enumerate}
+
+En este algoritmo básico aplicamos \textbf{inicio sesgado} a la lista de ahorro. Hay dos maneras de hacerlo:
+\begin{enumerate}
+\item El orden de la lista de ahorro es completamente aleatorio. Cada arista tiene la misma probabilidad de ser analizada y fusionada la ruta de sus nodos primero.
+A este caso se le puede limitar la aleatoriedad limitando cuantas aristas tiene en cuenta. Por ejemplo, la elección de aristas es completamente aleatoria pero solo entre las 10 aristas que suponen mayor ahorro.
+\item El orden de la lista de ahorro es aleatorio con una probabilidad sesgada. Esto significa que las aristas con mayor ahorro tendrán mas probabilidad de ser elegidas primero.
+Podemos modificar cuanto sesgo queremos utilizar con un valor Beta. Utilizando una Beta pequeña el sesgo para elegir aristas de mayor ahorro es menor y con una Beta grande el sesgo es mayor y la elección de aristas se asemeja al algoritmo básico.
+\end{enumerate}
+Nosotros hemos utilizado el segundo método basándonos en la literatura investigada. El código que nos modificaba la lista de ahorro según el valor Beta es el siguiente:
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth, height=3.5cm]{generateBiasedSavingList.png} 
+\label{fig:subim1}
+\end{figure}
+
+Como existe un componente aleatorio, la ejecución de este método ha de ser realizada varias veces para evitar que encontremos una anomalía estadística y que los resultados no sean fiables. Cuantas más veces iteramos las posibles anomalías desaparecen y tenemos un resultado más fiable que no depende de la “suerte” que tengamos con las probabilidades. \\
+
+El \textbf{método de aprendizaje} mediante la cache de rutas se basa en la idea de que en cada iteración se generan rutas distintas con diferente coste (debido al inicio sesgado que utilizamos). \\
+
+Si mantenemos un mapa con las mejores rutas encontradas para determinado conjunto de nodos, podemos mejorar el coste de la solución final encontrada comparando las rutas de la solución con las mejores rutas encontradas. \\
+
+Por ejemplo, quizás nuestra solución final ha encontrado una ruta que implica a los nodos 0,1,2,3,4 en el orden: 0-2-3-4-1. Como hemos guardado la mejor ruta encontrada para cada conjunto de nodos, comprobamos si hay alguna manera de recorrer esos nodos con menor coste, y encontramos que la ruta 0-3-2-1-4 es más “barata” de hacer. Así que sustituiríamos la ruta final de la solución con otra mejor.\\
+
+El código con el que hacemos esta comprobación es el siguiente:
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth, height=4cm]{improveSolutionWithBestRoutesFound.png} 
+\label{fig:subim1}
+\end{figure}
+
+Y la actualización del mapa con rutas mejores así:
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth, height=4cm]{routeHashUpdate.png} 
+\label{fig:subim1}
+\end{figure}
+
+El último método que hemos aplicado es el de \textbf{“Divide y vencerás”}. Este método se basa en la división del problema inicial en subproblemas más pequeños de manera que se pueden calcular soluciones independientes que pueden mejorar las rutas encontradas. Estas soluciones una vez encontradas son juntadas y nos otorgan una solución final al problema.\\
+
+En nuestro caso, la división del problema se hace mediante la localización de los nodos en el espacio. Cada nodo tiene unas coordenadas X e Y de manera que dividimos los nodos por su posición en el mapa.\\
+
+\clearpage
+
+Hemos utilizado cuatro maneras diferentes para dividir los nodos:
+ \begin{enumerate}
+\item Nodos por encima y por debajo de la coordenada Y(0). Genera 2 subgrupos de nodos.
+\item Nodos a la derecha o izquierda de la coordenada X(0). Genera 2 subgrupos de nodos.
+\item Nodos en cada uno de los 4 cuadrantes del eje de coordenadas. Genera 4 subgrupos de nodos.
+\item Nodos en cada uno de los 4 cuadrantes divididos por la diagonal. Genera 8 subgrupos de nodos.
+\end{enumerate}
+
+Este método puede funcionar mejor o peor dependiendo de las características de la red. Por ejemplo, si todos los nodos están por debajo de Y(0) y utilizamos el primer enfoque, solo generaremos un subgrupo de nodos.\\
+Además, hay que tener en cuenta que no siempre la división del problema nos otorgara mejores soluciones.\\
+
+El código para dividir el mapa de nodos y encontrar soluciones independientes es el siguiente:
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth, height=8cm]{splittingCode.png} 
+\label{fig:subim1}
+\end{figure}
+
+Por último, estos 3 métodos pueden combinarse entre ellos para conseguir una mejor solución explotando las posibilidades que nos ofrece cada uno. Hemos hecho diversas pruebas combinando los 3 métodos que aparecen en el siguiente apartado.
+
+\clearpage
+
    \item) \textbf{Experimento computacional y análisis de resultados}\\[0.2cm]
    \item) \textbf{Conclusiones y trabajo futuro}\\[0.2cm]
  \end{enumerate}
