@@ -19,40 +19,77 @@ class HeuristicSequential:
     # savingsList
     # sol 
     
-    def __init__(self, instanceName, nodeMatrix, vehCap):
+    def __init__(self, instanceName, vehCap, nodeMatrix):
         self.instanceName=instanceName
         self.vehCap = vehCap
-        #with open(fileName) as instance:
-        i = 0
         self.nodes = []
         for nodeData in nodeMatrix:
             # array  data with node data: x, y, demand
-            aNode = Node(nodeData[0], nodeData[1], nodeData[2], nodeData[3])
-            self.nodes.append(aNode)
+            self.nodes.append(Node(nodeData[0], nodeData[1], nodeData[2], nodeData[3]))
         self.bestRoutes = {} # best routes regarding cost 
         self.enabledRouteCacheUsage = False
-        
-    def startInstance(self):
-        self.constructEdges(self.nodes)
+    
+    def runCWSSolGeneral(self, beta = 0.0, RCU = False, splittingType= "Null"):
         self.sol = Solution()
-        
-    def enableRCU(self):
-        self.enabledRouteCacheUsage = True
+        if RCU == True:
+            self.enabledRouteCacheUsage = True
+        if beta == 0.0:
+            self.constructEdges(self.nodes)
+            self.constructDummySolution(self.nodes) 
+            self.edgeSelectionRoutingMerging(self.savingsList)
+        elif splittingType == "Null":
+            self.constructEdges(self.nodes)
+            self.constructDummySolution(self.nodes) 
+            biasedList = self.generateBiasedSavingsList(beta)
+            self.edgeSelectionRoutingMerging(biasedList)
+            
+            if( self.enabledRouteCacheUsage ):
+                self.improveSolutionWithBestRoutesFound()
+        else:
+            splt_Nodes = self.runSplitting(splittingType)
+            for splt_node in splt_Nodes:
+                self.bestRoutes = {}
+                self.constructEdges(splt_node)
+                self.constructDummySolution(splt_node)
+                biasedList = self.generateBiasedSavingsList(beta)
+                self.edgeSelectionRoutingMerging(biasedList)
+                
+                if( self.enabledRouteCacheUsage ):
+                    self.improveSolutionWithBestRoutesFound()  
         
     def runCWSSol(self):
+        self.sol = Solution()
+        self.constructEdges(self.nodes)
         self.constructDummySolution(self.nodes) 
         self.edgeSelectionRoutingMerging(self.savingsList)
 
     def runRandomSol(self, beta=0.3):
+        self.sol = Solution()
+        self.constructEdges(self.nodes)
         self.constructDummySolution(self.nodes) 
         biasedList = self.generateBiasedSavingsList(beta)
         self.edgeSelectionRoutingMerging(biasedList)
         
         if( self.enabledRouteCacheUsage ):
             self.improveSolutionWithBestRoutesFound()
-
+        
     def runSplittingSol(self, beta=0.3, splittingType="TopBottom" ):
+        self.sol = Solution()
+        splt_Nodes = self.runSplitting(splittingType)
+        
+        for splt_node in splt_Nodes:
+            self.bestRoutes = {}
+            self.constructEdges(splt_node)
+            self.constructDummySolution(splt_node)
+            biasedList = self.generateBiasedSavingsList(beta)
+            self.edgeSelectionRoutingMerging(biasedList)
+            
+            if( self.enabledRouteCacheUsage ):
+                self.improveSolutionWithBestRoutesFound()
+                
+    def runSplitting(self, splittingType):
         splittingTypes = ['TopBottom', 'LeftRight', "Cross", "Star"]
+        splt_Nodes = []
         if splittingType not in splittingTypes:
             raise ValueError("Invalid sim type. Expected one of: %s" % splittingTypes)
         if splittingType == "TopBottom":
@@ -63,19 +100,17 @@ class HeuristicSequential:
             splt_Nodes = self.splitCrossNodes()
         if splittingType == "Star": #8 cuadrants
             splt_Nodes = self.splitStarNodes()
-            
+        return splt_Nodes
+    
+    def startInstance(self):
+        self.constructEdges(self.nodes)
         self.sol = Solution()
-        for splt_node in splt_Nodes:
-            self.bestRoutes = {}
-            self.constructEdges(splt_node)
-            self.constructDummySolution(splt_node)
-            biasedList = self.generateBiasedSavingsList(beta)
-            self.edgeSelectionRoutingMerging(biasedList)
-            
-            if( self.enabledRouteCacheUsage ):
-                self.improveSolutionWithBestRoutesFound()
-
-    def splitTopBottomNodes(self): #Split the nodes depending on their position with respect to the Y axis.
+        
+    def enableRCU(self):
+        self.enabledRouteCacheUsage = True
+        
+    def splitTopBottomNodes(self): 
+        #Split the nodes depending on their position with respect to the Y axis.
         splitted_nodes = [[self.nodes[0]], [self.nodes[0]]] #Depot node is included in both splitted lists
         for node in self.nodes[1:]:
             if node.y >= 0: #Positive Y nodes will be added to the first list
@@ -84,7 +119,8 @@ class HeuristicSequential:
                 splitted_nodes[1].append(node)
         return splitted_nodes
 
-    def splitLeftRightNodes(self): #Split the nodes depending on their position with respect to the X axis.
+    def splitLeftRightNodes(self): 
+        #Split the nodes depending on their position with respect to the X axis.
         splitted_nodes = [[self.nodes[0]], [self.nodes[0]]] #Depot node is included in both splitted lists
         for node in self.nodes[1:]:
             if node.x >= 0: #Positive X nodes will be added to the first list
@@ -93,7 +129,8 @@ class HeuristicSequential:
                 splitted_nodes[1].append(node)
         return splitted_nodes
         
-    def splitCrossNodes(self): #Split the nodes depending on their position with respect to the X  and Y axis.
+    def splitCrossNodes(self): 
+        #Split the nodes depending on their position with respect to the X  and Y axis.
         splitted_nodes = [[self.nodes[0]], [self.nodes[0]], [self.nodes[0]], [self.nodes[0]]]#Depot node is included in all splitted lists
         for node in self.nodes[1:]:
             if node.x >= 0 and node.y >=0: #Positive cuadrant nodes will be added to the first list
@@ -107,7 +144,9 @@ class HeuristicSequential:
         return splitted_nodes
 
     def splitStarNodes(self): 
-        splitted_nodes = [[self.nodes[0]], [self.nodes[0]], [self.nodes[0]], [self.nodes[0]], [self.nodes[0]], [self.nodes[0]], [self.nodes[0]], [self.nodes[0]]] #Depot node is included in all splitted lists
+        splitted_nodes = [[self.nodes[0]], [self.nodes[0]], [self.nodes[0]], [self.nodes[0]], 
+                          [self.nodes[0]], [self.nodes[0]], [self.nodes[0]], [self.nodes[0]]] 
+        #Depot node is included in all splitted lists
         for node in self.nodes[1:]:
             if node.x >= 0 and node.y >=0: #Positive cuadrant
                 if node.x >= node.y:
