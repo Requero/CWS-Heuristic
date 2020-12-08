@@ -6,6 +6,7 @@ import copy
 import vrp_objects as vrp
 import time
 import pandas as pd 
+import numpy as np
 import multiprocessing as mp
 import itertools as it
 
@@ -14,7 +15,7 @@ def testCWS(instanceData):
     #instanceName, veCap, nodeMatrix
     instanceCws = cws.HeuristicSequential(instanceData[0], instanceData[1], instanceData[2])
     instanceCws.runCWSSol()
-    return [instanceData[0],instanceData[1], instanceCws.getCost()]
+    return [instanceData[0],instanceData[1], round(instanceCws.getCost(),2)]
 
 def testSRGCWS(params):
     #instanceData, beta, nIterations, isRCU, splittingType
@@ -28,7 +29,7 @@ def testSRGCWS(params):
         if sol.cost < bestSol.cost:
             bestSol = copy.deepcopy( sol )
     deltaTime = time.time() - startTime
-    return [params[0][0], params[0][1], params[2], params[3], params[4], bestSol.cost] #, deltaTime
+    return [params[0][0], params[0][1], params[2], params[3], params[4], round(bestSol.cost,2)] #, deltaTime
 
 def readNodes(filename):
     dirname, f = os.path.split(os.path.abspath(__file__))
@@ -51,27 +52,27 @@ def generateColumns(dfs):
     dataframe = pd.DataFrame()
     #dataframe["Instance", "Capacity", "Original", "Random", "RandomRCU", "TopBottom","LeftRight", "Cross", "Star","TopBottomRCU", "LeftRightRCU","CrossRCU","StarRCU"]
     dataframe = dfs[1].copy()
-    dataframe['Random'] = dfs[0].loc[(dfs[0]['RCU'] == False )&( dfs[0]['SplittingType'] == 'Null'), ['Cost']].values
-    dataframe['RandomRCU'] = dfs[0].loc[(dfs[0]['RCU'] == True )&( dfs[0]['SplittingType'] == 'Null'), ['Cost']].values
-    dataframe['TopBottom'] = dfs[0].loc[(dfs[0]['RCU'] == False )&( dfs[0]['SplittingType'] == 'TopBottom'), ['Cost']].values
-    dataframe['LeftRight'] =  dfs[0].loc[(dfs[0]['RCU'] == False )&( dfs[0]['SplittingType'] == 'LeftRight'), ['Cost']].values
-    dataframe['Cross'] =  dfs[0].loc[(dfs[0]['RCU'] == False )&( dfs[0]['SplittingType'] == 'Cross'), ['Cost']].values
-    dataframe['Star'] =  dfs[0].loc[(dfs[0]['RCU'] == False )&( dfs[0]['SplittingType'] == 'Star'), ['Cost']].values
-    dataframe['TopBottomRCU'] =  dfs[0].loc[(dfs[0]['RCU'] == True )&( dfs[0]['SplittingType'] == 'TopBottom'), ['Cost']].values
-    dataframe['LeftRightRCU'] =  dfs[0].loc[(dfs[0]['RCU'] == True )&( dfs[0]['SplittingType'] == 'LeftRight'), ['Cost']].values
-    dataframe['CrossRCU'] =  dfs[0].loc[(dfs[0]['RCU'] == True )&( dfs[0]['SplittingType'] == 'Cross'), ['Cost']].values
-    dataframe['StarRCU'] =  dfs[0].loc[(dfs[0]['RCU'] == True )&( dfs[0]['SplittingType'] == 'Star'), ['Cost']].values
+    dataframe['Random'] = np.round(dfs[0].loc[(dfs[0]['RCU'] == False )&( dfs[0]['SplittingType'] == 'Null'), ['Cost']].values,2)
+    dataframe['RandomRCU'] = np.round(dfs[0].loc[(dfs[0]['RCU'] == True )&( dfs[0]['SplittingType'] == 'Null'), ['Cost']].values,2)
+    dataframe['TopBottom'] = np.round(dfs[0].loc[(dfs[0]['RCU'] == False )&( dfs[0]['SplittingType'] == 'TopBottom'), ['Cost']].values,2)
+    dataframe['LeftRight'] =  np.round(dfs[0].loc[(dfs[0]['RCU'] == False )&( dfs[0]['SplittingType'] == 'LeftRight'), ['Cost']].values,2)
+    dataframe['Cross'] =  np.round(dfs[0].loc[(dfs[0]['RCU'] == False )&( dfs[0]['SplittingType'] == 'Cross'), ['Cost']].values,2)
+    dataframe['Star'] =  np.round(dfs[0].loc[(dfs[0]['RCU'] == False )&( dfs[0]['SplittingType'] == 'Star'), ['Cost']].values,2)
+    dataframe['TopBottomRCU'] =  np.round(dfs[0].loc[(dfs[0]['RCU'] == True )&( dfs[0]['SplittingType'] == 'TopBottom'), ['Cost']].values,2)
+    dataframe['LeftRightRCU'] =  np.round(dfs[0].loc[(dfs[0]['RCU'] == True )&( dfs[0]['SplittingType'] == 'LeftRight'), ['Cost']].values,2)
+    dataframe['CrossRCU'] =  np.round(dfs[0].loc[(dfs[0]['RCU'] == True )&( dfs[0]['SplittingType'] == 'Cross'), ['Cost']].values,2)
+    dataframe['StarRCU'] =  np.round(dfs[0].loc[(dfs[0]['RCU'] == True )&( dfs[0]['SplittingType'] == 'Star'), ['Cost']].values,2)
      
-    dataframe['gap1'] = 100*(dataframe['Random'] - dataframe['Original'])/dataframe['Original']
-    dataframe['gap2'] = 100*(dataframe['RandomRCU'] - dataframe['Original'])/dataframe['Original']
-    dataframe['gap3'] = 100*(dataframe['TopBottom'] - dataframe['Original'])/dataframe['Original']
-    dataframe['gap4'] = 100*(dataframe['LeftRight'] - dataframe['Original'])/dataframe['Original']
-    dataframe['gap5'] = 100*(dataframe['Cross'] - dataframe['Original'])/dataframe['Original']
-    dataframe['gap6'] = 100*(dataframe['Star'] - dataframe['Original'])/dataframe['Original']
-    dataframe['gap7'] = 100*(dataframe['TopBottomRCU'] - dataframe['Original'])/dataframe['Original']
-    dataframe['gap8'] = 100*(dataframe['LeftRightRCU'] - dataframe['Original'])/dataframe['Original']
-    dataframe['gap9'] = 100*(dataframe['CrossRCU'] - dataframe['Original'])/dataframe['Original']
-    dataframe['gap10'] = 100*(dataframe['StarRCU'] - dataframe['Original'])/dataframe['Original']
+    dataframe['gap1'] = np.round(100*(dataframe['Random'] - dataframe['Original'])/dataframe['Original'],2)
+    dataframe['gap2'] = np.round(100*(dataframe['RandomRCU'] - dataframe['Original'])/dataframe['Original'],2)
+    dataframe['gap3'] = np.round(100*(dataframe['TopBottom'] - dataframe['Original'])/dataframe['Original'],2)
+    dataframe['gap4'] = np.round(100*(dataframe['LeftRight'] - dataframe['Original'])/dataframe['Original'],2)
+    dataframe['gap5'] = np.round(100*(dataframe['Cross'] - dataframe['Original'])/dataframe['Original'],2)
+    dataframe['gap6'] = np.round(100*(dataframe['Star'] - dataframe['Original'])/dataframe['Original'],2)
+    dataframe['gap7'] = np.round(100*(dataframe['TopBottomRCU'] - dataframe['Original'])/dataframe['Original'],2)
+    dataframe['gap8'] = np.round(100*(dataframe['LeftRightRCU'] - dataframe['Original'])/dataframe['Original'],2)
+    dataframe['gap9'] = np.round(100*(dataframe['CrossRCU'] - dataframe['Original'])/dataframe['Original'],2)
+    dataframe['gap10'] = np.round(100*(dataframe['StarRCU'] - dataframe['Original'])/dataframe['Original'],2)
     
     dataframe.reset_index()
     return dataframe
