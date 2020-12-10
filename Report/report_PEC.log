@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 2.9.7400 64-bit) (preloaded format=pdflatex 2020.11.1)  9 DEC 2020 22:32
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 2.9.7400 64-bit) (preloaded format=pdflatex 2020.11.1)  10 DEC 2020 21:50
 entering extended mode
 **./report_PEC.tex
 (report_PEC.tex
@@ -115,6 +115,13 @@ Package: longtable 2020/01/07 v4.13 Multi-page Table package (DPC)
 \c@LT@tables=\count183
 \c@LT@chunks=\count184
 \LT@p@ftn=\toks19
+) ("C:\Users\mauro\AppData\Local\Programs\MiKTeX 2.9\tex/latex/float\float.sty"
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count185
+\float@exts=\toks20
+\float@box=\box50
+\@float@everytoks=\toks21
+\@floatcapt=\box51
 )
 ("C:\Users\mauro\AppData\Local\Programs\MiKTeX 2.9\tex/latex/geometry\geometry.
 sty"
@@ -127,9 +134,9 @@ Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
 "
 Package: iftex 2020/03/06 v1.0d TeX engine tests
 ))
-\Gm@cnth=\count185
-\Gm@cntv=\count186
-\c@Gm@tempcnt=\count187
+\Gm@cnth=\count186
+\Gm@cntv=\count187
+\c@Gm@tempcnt=\count188
 \Gm@bindingoffset=\dimen145
 \Gm@wd@mp=\dimen146
 \Gm@odd@mp=\dimen147
@@ -138,7 +145,7 @@ Package: iftex 2020/03/06 v1.0d TeX engine tests
 \Gm@layoutheight=\dimen150
 \Gm@layouthoffset=\dimen151
 \Gm@layoutvoffset=\dimen152
-\Gm@dimlist=\toks20
+\Gm@dimlist=\toks22
 
 ("C:\Users\mauro\AppData\Local\Programs\MiKTeX 2.9\tex/latex/geometry\geometry.
 cfg"))
@@ -155,23 +162,23 @@ Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
 \cmidrulesep=\dimen160
 \cmidrulekern=\dimen161
 \defaultaddspace=\dimen162
-\@cmidla=\count188
-\@cmidlb=\count189
+\@cmidla=\count189
+\@cmidlb=\count190
 \@aboverulesep=\dimen163
 \@belowrulesep=\dimen164
-\@thisruleclass=\count190
-\@lastruleclass=\count191
+\@thisruleclass=\count191
+\@lastruleclass=\count192
 \@thisrulewidth=\dimen165
 )
 ("C:\Users\mauro\AppData\Local\Programs\MiKTeX 2.9\tex/latex/tools\array.sty"
 Package: array 2019/08/31 v2.4l Tabular extension package (FMi)
 \col@sep=\dimen166
-\ar@mcellbox=\box50
+\ar@mcellbox=\box52
 \extrarowheight=\dimen167
-\NC@list=\toks21
+\NC@list=\toks23
 \extratabsurround=\skip55
 \backup@length=\skip56
-\ar@cellbox=\box51
+\ar@cellbox=\box53
 )
 ("C:\Users\mauro\AppData\Local\Programs\MiKTeX 2.9\tex/latex/paralist\paralist.
 sty"
@@ -180,13 +187,13 @@ Package: paralist 2017/01/22 v2.7 Extended list environments
 \plpartopsep=\skip58
 \plitemsep=\skip59
 \plparsep=\skip60
-\pl@lab=\toks22
+\pl@lab=\toks24
 )
 ("C:\Users\mauro\AppData\Local\Programs\MiKTeX 2.9\tex/latex/tools\verbatim.sty
 "
 Package: verbatim 2019/11/10 v1.5r LaTeX2e package for verbatim enhancements
-\every@verbatim=\toks23
-\verbatim@line=\toks24
+\every@verbatim=\toks25
+\verbatim@line=\toks26
 \verbatim@in@stream=\read2
 )
 ("C:\Users\mauro\AppData\Local\Programs\MiKTeX 2.9\tex/latex/fancyhdr\fancyhdr.
@@ -271,9 +278,15 @@ Package tocloft Info: The document has section divisions on input line 51.
 ("C:\Users\mauro\AppData\Local\Programs\MiKTeX 2.9\tex/latex/l3backend\l3backen
 d-pdfmode.def"
 File: l3backend-pdfmode.def 2020-03-12 L3 backend support: PDF mode
-\l__kernel_color_stack_int=\count192
-\l__pdf_internal_box=\box52
+\l__kernel_color_stack_int=\count193
+\l__pdf_internal_box=\box54
 ) (report_PEC.aux
+
+LaTeX Warning: Label `fig:subim1' multiply defined.
+
+
+LaTeX Warning: Label `fig:subim1' multiply defined.
+
 
 LaTeX Warning: Label `fig:subim1' multiply defined.
 
@@ -286,21 +299,22 @@ LaTeX Warning: Label `fig:subim1' multiply defined.
 )
 \openout1 = `report_PEC.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
 Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: float package is loaded.
 Package caption Info: longtable package is loaded.
 
 ("C:\Users\mauro\AppData\Local\Programs\MiKTeX 2.9\tex/latex/caption\ltcaption.
@@ -313,17 +327,17 @@ Package caption Info: End \AtBeginDocument code.
 ("C:\Users\mauro\AppData\Local\Programs\MiKTeX 2.9\tex/context/base/mkii\supp-p
 df.mkii"
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count193
+\scratchcounter=\count194
 \scratchdimen=\dimen168
-\scratchbox=\box53
-\nofMPsegments=\count194
-\nofMParguments=\count195
-\everyMPshowfont=\toks25
-\MPscratchCnt=\count196
+\scratchbox=\box55
+\nofMPsegments=\count195
+\nofMParguments=\count196
+\everyMPshowfont=\toks27
+\MPscratchCnt=\count197
 \MPscratchDim=\dimen169
-\MPnumerator=\count197
-\makeMPintoPDFobject=\count198
-\everyMPtoPDFconversion=\toks26
+\MPnumerator=\count198
+\makeMPintoPDFobject=\count199
+\everyMPtoPDFconversion=\toks28
 )
 ("C:\Users\mauro\AppData\Local\Programs\MiKTeX 2.9\tex/latex/epstopdf-pkg\epsto
 pdf-base.sty"
@@ -366,20 +380,20 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 70.
+(Font)              <12> on input line 71.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 70.
+(Font)              <8> on input line 71.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 70.
+(Font)              <6> on input line 71.
 [1
 
 {C:/Users/mauro/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
-Underfull \hbox (badness 10000) in paragraph at lines 100--102
+Underfull \hbox (badness 10000) in paragraph at lines 101--103
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 103--104
+Underfull \hbox (badness 10000) in paragraph at lines 104--105
 
  []
 
@@ -390,12 +404,12 @@ We now make it that large for the rest of the document.
 This may cause the page layout to be inconsistent, however.
 
 [2]
-Underfull \hbox (badness 10000) in paragraph at lines 111--112
+Underfull \hbox (badness 10000) in paragraph at lines 112--113
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 113--114
+Underfull \hbox (badness 10000) in paragraph at lines 114--115
 
  []
 
@@ -404,12 +418,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 113--114
 ]
 
 LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <50> not available
-(Font)              size <24.88> substituted on input line 119.
+(Font)              size <24.88> substituted on input line 120.
 
 [4
 
 ]
-Overfull \hbox (0.25919pt too wide) in paragraph at lines 149--150
+Overfull \hbox (0.25919pt too wide) in paragraph at lines 150--151
 []\OT1/cmr/m/n/10.95 Construir las aris-tas en-tre los no-dos, cal-cu-lando un 
 coste aso-ci-ado al movimiento
  []
@@ -417,27 +431,27 @@ coste aso-ci-ado al movimiento
 <generateBiasedSavingList.png, id=20, 412.54124pt x 115.632pt>
 File: generateBiasedSavingList.png Graphic file (type png)
 <use generateBiasedSavingList.png>
-Package pdftex.def Info: generateBiasedSavingList.png  used on input line 165.
+Package pdftex.def Info: generateBiasedSavingList.png  used on input line 166.
 (pdftex.def)             Requested size: 341.43974pt x 99.58978pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 169--170
+Underfull \hbox (badness 10000) in paragraph at lines 170--171
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 171--172
+Underfull \hbox (badness 10000) in paragraph at lines 172--173
 
  []
 
 [5
 
  <./generateBiasedSavingList.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 173--174
+Underfull \hbox (badness 10000) in paragraph at lines 174--175
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 175--176
+Underfull \hbox (badness 10000) in paragraph at lines 176--177
 
  []
 
@@ -445,241 +459,92 @@ Underfull \hbox (badness 10000) in paragraph at lines 175--176
 File: improveSolutionWithBestRoutesFound.png Graphic file (type png)
 <use improveSolutionWithBestRoutesFound.png>
 Package pdftex.def Info: improveSolutionWithBestRoutesFound.png  used on input 
-line 181.
+line 182.
 (pdftex.def)             Requested size: 341.45735pt x 113.81293pt.
 <routeHashUpdate.png, id=28, 347.49825pt x 128.27925pt>
 File: routeHashUpdate.png Graphic file (type png)
 <use routeHashUpdate.png>
-Package pdftex.def Info: routeHashUpdate.png  used on input line 189.
+Package pdftex.def Info: routeHashUpdate.png  used on input line 190.
 (pdftex.def)             Requested size: 341.45795pt x 113.81583pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 193--194
+Underfull \hbox (badness 10000) in paragraph at lines 194--195
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 195--196
+Underfull \hbox (badness 10000) in paragraph at lines 196--197
 
  []
 
 [6 <./improveSolutionWithBestRoutesFound.png> <./routeHashUpdate.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 207--209
+Underfull \hbox (badness 10000) in paragraph at lines 208--210
 
  []
 
 <splittingCode.png, id=34, 428.19975pt x 267.399pt>
 File: splittingCode.png Graphic file (type png)
 <use splittingCode.png>
-Package pdftex.def Info: splittingCode.png  used on input line 214.
+Package pdftex.def Info: splittingCode.png  used on input line 215.
 (pdftex.def)             Requested size: 341.44298pt x 227.62479pt.
 [7
 
  <./splittingCode.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 222--223
+Underfull \hbox (badness 10000) in paragraph at lines 223--224
 
  []
 
+<table031.png, id=40, 1023.07219pt x 644.4075pt>
+File: table031.png Graphic file (type png)
+<use table031.png>
+Package pdftex.def Info: table031.png  used on input line 242.
+(pdftex.def)             Requested size: 426.78378pt x 284.5333pt.
+<table032.png, id=41, 998.9822pt x 630.85687pt>
+File: table032.png Graphic file (type png)
+<use table032.png>
+Package pdftex.def Info: table032.png  used on input line 245.
+(pdftex.def)             Requested size: 426.79495pt x 284.52791pt.
 [8
 
-]
+ <./table031.png>]
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <10.95> on input line 228.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 229.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 229.
-
-Overfull \hbox (7.99176pt too wide) in paragraph at lines 231--231
- []|\OT1/cmr/m/n/10 Instance| 
- []
-
-
-Overfull \hbox (4.74576pt too wide) in paragraph at lines 232--232
- []|\OT1/cmr/m/n/10 Capacity| 
- []
-
-
-Overfull \hbox (7.13069pt too wide) in paragraph at lines 233--233
- []|\OT1/cmr/m/n/10 Original 
- []
-
-
-Overfull \hbox (8.3529pt too wide) in paragraph at lines 234--234
- []|\OT1/cmr/m/n/10 Random 
- []
-
-
-Overfull \hbox (7.39618pt too wide) in paragraph at lines 235--235
- []|\OT1/cmr/m/n/10 RandomRCU 
- []
-
-
-Overfull \hbox (7.4599pt too wide) in paragraph at lines 236--236
- []|\OT1/cmr/m/n/10 TopBottom 
- []
-
-
-Overfull \hbox (3.65816pt too wide) in paragraph at lines 240--240
- []|\OT1/cmr/m/n/10 TopBottomRCU 
- []
-
-
-Overfull \hbox (6.8446pt too wide) in paragraph at lines 241--241
- []|\OT1/cmr/m/n/10 LeftRightRCU 
- []
-
-
-Overfull \hbox (3.15425pt too wide) in paragraph at lines 242--242
- []|\OT1/cmr/m/n/10 CrossRCU 
- []
-
-
-Overfull \hbox (11.71399pt too wide) in paragraph at lines 243--243
- []|\OT1/cmr/m/n/10 StarRCU 
- []
-
-
-LaTeX Warning: Float too large for page by 30.00865pt on input line 281.
-
-
-Overfull \hbox (0.62715pt too wide) in paragraph at lines 287--327
- [][] 
- []
-
-
-LaTeX Warning: Float too large for page by 18.00865pt on input line 327.
-
-
-Overfull \hbox (7.99176pt too wide) in paragraph at lines 335--335
- []|\OT1/cmr/m/n/10 Instance| 
- []
-
-
-Overfull \hbox (4.74576pt too wide) in paragraph at lines 336--336
- []|\OT1/cmr/m/n/10 Capacity| 
- []
-
-
-Overfull \hbox (7.13069pt too wide) in paragraph at lines 337--337
- []|\OT1/cmr/m/n/10 Original 
- []
-
-
-Overfull \hbox (8.3529pt too wide) in paragraph at lines 338--338
- []|\OT1/cmr/m/n/10 Random 
- []
-
-
-Overfull \hbox (7.39618pt too wide) in paragraph at lines 339--339
- []|\OT1/cmr/m/n/10 RandomRCU 
- []
-
-
-Overfull \hbox (7.4599pt too wide) in paragraph at lines 340--340
- []|\OT1/cmr/m/n/10 TopBottom 
- []
-
-
-Overfull \hbox (3.65816pt too wide) in paragraph at lines 344--344
- []|\OT1/cmr/m/n/10 TopBottomRCU 
- []
-
-
-Overfull \hbox (6.8446pt too wide) in paragraph at lines 345--345
- []|\OT1/cmr/m/n/10 LeftRightRCU 
- []
-
-
-Overfull \hbox (3.15425pt too wide) in paragraph at lines 346--346
- []|\OT1/cmr/m/n/10 CrossRCU 
- []
-
-
-Overfull \hbox (11.71399pt too wide) in paragraph at lines 347--347
- []|\OT1/cmr/m/n/10 StarRCU 
- []
-
-
-LaTeX Warning: Float too large for page by 30.00865pt on input line 385.
-
-
-Overfull \hbox (0.62715pt too wide) in paragraph at lines 391--431
- [][] 
- []
-
-
-LaTeX Warning: Float too large for page by 18.00865pt on input line 431.
-
-
-Overfull \hbox (7.99176pt too wide) in paragraph at lines 439--439
- []|\OT1/cmr/m/n/10 Instance| 
- []
-
-
-Overfull \hbox (4.74576pt too wide) in paragraph at lines 440--440
- []|\OT1/cmr/m/n/10 Capacity| 
- []
-
-
-Overfull \hbox (7.13069pt too wide) in paragraph at lines 441--441
- []|\OT1/cmr/m/n/10 Original 
- []
-
-
-Overfull \hbox (8.3529pt too wide) in paragraph at lines 442--442
- []|\OT1/cmr/m/n/10 Random 
- []
-
-
-Overfull \hbox (7.39618pt too wide) in paragraph at lines 443--443
- []|\OT1/cmr/m/n/10 RandomRCU 
- []
-
-
-Overfull \hbox (7.4599pt too wide) in paragraph at lines 444--444
- []|\OT1/cmr/m/n/10 TopBottom 
- []
-
-
-Overfull \hbox (3.65816pt too wide) in paragraph at lines 448--448
- []|\OT1/cmr/m/n/10 TopBottomRCU 
- []
-
-
-Overfull \hbox (6.8446pt too wide) in paragraph at lines 449--449
- []|\OT1/cmr/m/n/10 LeftRightRCU 
- []
-
-
-Overfull \hbox (3.15425pt too wide) in paragraph at lines 450--450
- []|\OT1/cmr/m/n/10 CrossRCU 
- []
-
-
-Overfull \hbox (11.71399pt too wide) in paragraph at lines 451--451
- []|\OT1/cmr/m/n/10 StarRCU 
- []
-
-
-LaTeX Warning: Float too large for page by 30.00865pt on input line 489.
-
-
-Overfull \hbox (0.62715pt too wide) in paragraph at lines 495--535
- [][] 
- []
-
-
-LaTeX Warning: Float too large for page by 18.00865pt on input line 535.
-
-[9] [10] [11] [12] [13] [14]
-Underfull \hbox (badness 10000) in paragraph at lines 539--540
+(Font)              <10.95> on input line 249.
+ [9 <./table032.png>]
+<table051.png, id=51, 1014.03844pt x 645.16031pt>
+File: table051.png Graphic file (type png)
+<use table051.png>
+Package pdftex.def Info: table051.png  used on input line 258.
+(pdftex.def)             Requested size: 426.79068pt x 284.52113pt.
+<table052.png, id=52, 994.46532pt x 627.09282pt>
+File: table052.png Graphic file (type png)
+<use table052.png>
+Package pdftex.def Info: table052.png  used on input line 261.
+(pdftex.def)             Requested size: 426.79234pt x 284.53348pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 265--267
 
  []
 
-[15
+[10
 
+ <./table051.png> <./table052.png>]
+<table081.png, id=58, 995.21812pt x 639.89063pt>
+File: table081.png Graphic file (type png)
+<use table081.png>
+Package pdftex.def Info: table081.png  used on input line 272.
+(pdftex.def)             Requested size: 426.79652pt x 284.53073pt.
+<table082.png, id=59, 1005.00468pt x 621.82312pt>
+File: table082.png Graphic file (type png)
+<use table082.png>
+Package pdftex.def Info: table082.png  used on input line 275.
+(pdftex.def)             Requested size: 426.79164pt x 284.52399pt.
+ [11
 
-] (report_PEC.aux)
+ <./table081.png> <./table082.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 283--284
+
+ []
+
+[12] (report_PEC.aux)
 
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 25.12pt have occurred.
@@ -689,13 +554,13 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 4102 strings out of 480930
- 67064 string characters out of 2899761
- 423868 words of memory out of 3000000
- 19937 multiletter control sequences out of 15000+200000
+ 4181 strings out of 480930
+ 68226 string characters out of 2899761
+ 308413 words of memory out of 3000000
+ 20006 multiletter control sequences out of 15000+200000
  539697 words of font info for 48 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 39i,12n,45p,1659b,494s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 39i,12n,45p,1659b,331s stack positions out of 5000i,500n,10000p,200000b,50000s
  <C:\Users\mauro\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi600\
 tcrm1095.pk><C:/Users/mauro/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/publi
 c/amsfonts/cm/cmbx10.pfb><C:/Users/mauro/AppData/Local/Programs/MiKTeX 2.9/font
@@ -706,9 +571,9 @@ ppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/U
 sers/mauro/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cms
 s12.pfb><C:/Users/mauro/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/am
 sfonts/cm/cmti10.pfb>
-Output written on report_PEC.pdf (15 pages, 192289 bytes).
+Output written on report_PEC.pdf (12 pages, 2840492 bytes).
 PDF statistics:
- 93 PDF objects out of 1000 (max. 8388607)
+ 95 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 21 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 51 words of extra memory for PDF output out of 10000 (max. 10000000)
 
