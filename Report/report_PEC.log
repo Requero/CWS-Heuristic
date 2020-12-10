@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 2.9.7400 64-bit) (preloaded format=pdflatex 2020.11.1)  10 DEC 2020 21:50
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 2.9.7400 64-bit) (preloaded format=pdflatex 2020.11.1)  10 DEC 2020 22:22
 entering extended mode
 **./report_PEC.tex
 (report_PEC.tex
@@ -296,6 +296,9 @@ LaTeX Warning: Label `fig:subim1' multiply defined.
 
 LaTeX Warning: Label `fig:subim1' multiply defined.
 
+
+LaTeX Warning: Label `fig:subim1' multiply defined.
+
 )
 \openout1 = `report_PEC.aux'.
 
@@ -493,6 +496,8 @@ Underfull \hbox (badness 10000) in paragraph at lines 223--224
 
  []
 
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <10.95> on input line 234.
 <table031.png, id=40, 1023.07219pt x 644.4075pt>
 File: table031.png Graphic file (type png)
 <use table031.png>
@@ -505,10 +510,7 @@ Package pdftex.def Info: table032.png  used on input line 245.
 (pdftex.def)             Requested size: 426.79495pt x 284.52791pt.
 [8
 
- <./table031.png>]
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <10.95> on input line 249.
- [9 <./table032.png>]
+ <./table031.png>] [9 <./table032.png>]
 <table051.png, id=51, 1014.03844pt x 645.16031pt>
 File: table051.png Graphic file (type png)
 <use table051.png>
@@ -524,23 +526,21 @@ Underfull \hbox (badness 10000) in paragraph at lines 265--267
 
  []
 
+<table081.png, id=53, 995.21812pt x 639.89063pt>
+File: table081.png Graphic file (type png)
+<use table081.png>
+Package pdftex.def Info: table081.png  used on input line 270.
+(pdftex.def)             Requested size: 426.79652pt x 284.53073pt.
 [10
 
  <./table051.png> <./table052.png>]
-<table081.png, id=58, 995.21812pt x 639.89063pt>
-File: table081.png Graphic file (type png)
-<use table081.png>
-Package pdftex.def Info: table081.png  used on input line 272.
-(pdftex.def)             Requested size: 426.79652pt x 284.53073pt.
 <table082.png, id=59, 1005.00468pt x 621.82312pt>
 File: table082.png Graphic file (type png)
 <use table082.png>
-Package pdftex.def Info: table082.png  used on input line 275.
+Package pdftex.def Info: table082.png  used on input line 273.
 (pdftex.def)             Requested size: 426.79164pt x 284.52399pt.
- [11
-
- <./table081.png> <./table082.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 283--284
+ [11 <./table081.png> <./table082.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 280--281
 
  []
 
@@ -571,7 +571,7 @@ ppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/U
 sers/mauro/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cms
 s12.pfb><C:/Users/mauro/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/am
 sfonts/cm/cmti10.pfb>
-Output written on report_PEC.pdf (12 pages, 2840492 bytes).
+Output written on report_PEC.pdf (12 pages, 2842352 bytes).
 PDF statistics:
  95 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
