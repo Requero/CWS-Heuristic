@@ -9,6 +9,11 @@
 \usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{lscape} 
+\usepackage{rotating}
+\usepackage{longtable}
+\usepackage{graphicx}
+\usepackage{float}
 %%% Examples of Article customizations
 % These packages are optional, depending whether you want the features they provide.
 % See the LaTeX Companion or other references for full information.
@@ -216,7 +221,83 @@ Por último, estos 3 métodos pueden combinarse entre ellos para conseguir una m
 \clearpage
 
    \item) \textbf{Experimento computacional y análisis de resultados}\\[0.2cm]
+
+Hemos realizado pruebas con la combinación de los siguientes parámetros:
+\begin{itemize}
+\item Beta: 0.3, 0.5, 0.8. De esta manera probamos desde un enfoque más aleatorio/exploratorio a uno más conservador.
+\item Uso de la caché de rutas: True/False.
+\item Técnica de subdivisión de la red: Top/Bottom, Left/Right, Cross, Star. 
+\item Número de iteraciones: 100.
+\end{itemize}
+
+Para realizar los experimentos hemos paralelizado el proceso para que podamos hacer todas las pruebas al mismo tiempo. De esta manera se pueden hacer más pruebas ahorrando un tiempo considerable.\\
+A continuación, mostramos para cada $\beta$ en 2 tablas: 
+\begin{itemize}
+\item La primera nos muestra el coste obtenido de la solución conseguida por cada variante del algoritmo para cada instancia.
+\item La segunda muestra el gap entre la solución inicial y la solución obtenida por cada una de las variantes del algoritmo.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth, height=10cm]{table031.png} 
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=\linewidth, height=10cm]{table032.png} 
+\label{fig:subim1}
+\end{figure}
+
+Para $\beta = 0.3$, podemos observar como el uso de la aleatorización sesgada consigue mejorar el coste de la solución inicial para todas las instancias (gap1). Además, vemos como el uso de la cache de rutas ayuda en la mayoría de los casos a conseguir un resultado ligeramente mejor (gap2).\\
+Respecto a la subdivisión del problema, apreciamos que la subdivisión en Star es la que peor funciona, empeorando la solución inicial en todos los casos en los que se aplica (gap6 y gap10). \\
+Las subdivisiones que mejor funcionan son las Top/Bottom y Left/Right, que consiguen mejorar un 40\% de las instancias (gap3 y gap4). El uso de la caché de rutas en estos casos no consigue que más instancias mejoren la solución inicial, pero en general mejora los resultados de las instancias que ya mejoraban antes (gap7 y gap8).\\
+El caso de la subdivisión en Cross no mejora las soluciones (gap5 y gap9), aunque no llega al nivel del caso Star ya que la media de soluciones no está tan alejada del caso base y consigue mejorar 2 instancias en cada gap.
+
+\clearpage
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth, height=10cm]{table051.png} 
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=\linewidth, height=10cm]{table052.png} 
+\label{fig:subim1}
+\end{figure}
+
+Para $\beta = 0.5$ obtenemos unos resultados muy parecidos. La aleatorización sesgada y el uso de la caché de rutas funcionan obteniendo resultados parecidos. La división del problema en Star y Cross sigue sin mejorar las solución original. \\
+La novedad que encontramos es que el la aplicación de la división Top/Bottom y Left/Right consigue mejorar más instancias, llegando a casi un 50\% de las instancias mejoradas.\\
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth, height=10cm]{table081.png} 
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=\linewidth, height=10cm]{table082.png} 
+\label{fig:subim1}
+\end{figure}
+
+Para $\beta = 0.8$, que es el caso más cercano a un comportamiento greedy como tiene el algoritmo base. Vemos que la aleatorización sesga y el uso de la caché de rutas siguen consiguiendo mejorar la solucion original en la mayoria de los escenarios. Observamos que la diferencia de coste comparandola con la solución inicial es menor. Al acercarnos al comportamiento base reducimos la diferencia entre las soluciones.\\
+Con la subdivisión de las rutas apreciamos el mismo comportamiento. Para los casos que tenían instancias mejoradas, estas siguen estando entre el 40 y 50\% pero el margen de mejora es menor.
+
    \item) \textbf{Conclusiones y trabajo futuro}\\[0.2cm]
+
+A partir de los resultados obtenidos podemos concluir que:
+
+\begin{itemize}
+\item El uso de la randomizacion sesgada + cache de rutas es la mejor opción a la hora de mejorar los resultados obtenidos del algoritmo original.
+\item El parámetro que genera mejores resultados a la hora de aplicar randomización sesgada es la $\beta  = 0.5$.
+\item La subdivisión de los nodos solo consigue mejorar las soluciones en un bajo porcentaje de las topologías, por lo que puede que exista una dependencia entre el tipo de topología y la mejor sectorización a aplicar, aunque a priori no se observa un patrón evidente.
+\item La paralelización de la ejecucion de algunas partes del algoritmo llegan a reducir el tiempo de ejecución de todos los casos de test, sobre todas las instancias estudiadas, de manera considerable. Toda la ejecución y generación de tablas de resultados se realizó en un tiempo medio de 20 min (este valor puede variar en función del hardware utilizado).
+\end{itemize}
+
+Como trabajo futuro proponemos: 
+
+\begin{itemize}
+\item Estudiar si con un mayor numero de iteraciones, se mejoran de manera significativa los resultados obtenidos y en que punto las soluciones dejan de mejorar.
+\item Explorar para valores de $\beta$ entre 0.4 y 0.6, si las soluciones mejoran.
+\item Analizar si existe una dependencia entre la topologia de la red y el tipo de subdivisión aplicado y determinar que método es el mas adecuado para cada caso.
+\item Aplicar diferentes métodos de splitting más complejos y elaborados en función de la topología de la red.
+\item Determinar que areas de la ejecución pueden ser paralelizadas para mejorar el rendimiento de la ejecución del algoritmo.
+\end{itemize}
+
  \end{enumerate}
 
 \end{document}
