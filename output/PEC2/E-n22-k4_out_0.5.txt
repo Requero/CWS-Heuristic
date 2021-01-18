@@ -1,0 +1,21 @@
+Done in [0.001001s]
+Instance: E-n22-k4
+Cost of C&W savings sol= 388.772286
+Instance: E-n22-k4
+Route: 0-9-7-5-2-1-6-8-0 || cost = 113.403150
+Route: 0-10-3-4-11-13-0 || cost = 102.577050
+Route: 0-14-16-17-15-12-0 || cost = 72.667556
+Route: 0-18-20-21-19-0 || cost = 100.124530
+----------TopBottom----------
+New best solution: 428.45311210818176
+New best solution: 419.1235800304794
+New best solution: 402.88943979578227
+New best solution: 388.14592858344326
+New best solution: 387.27454069247557
+Done in [2.527462s]
+Instance: E-n22-k4
+Route: 0-6-1-2-5-7-9-0 || cost = 112.170244
+Route: 0-11-4-3-8-10-12-0 || cost = 103.782919
+Route: 0-14-17-21-19-13-0 || cost = 88.943610
+Route: 0-16-20-18-15-0 || cost = 82.377768
+Solution cost = 387.274541
