@@ -1,0 +1,303 @@
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+% This is a simple template for a LaTeX document using the "article" class.
+% See "book", "report", "letter" for other types of document.
+
+\documentclass[11pt]{article} % use larger type; default would be 10pt
+
+\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{lscape} 
+\usepackage{rotating}
+\usepackage{longtable}
+\usepackage{graphicx}
+\usepackage{float}
+%%% Examples of Article customizations
+% These packages are optional, depending whether you want the features they provide.
+% See the LaTeX Companion or other references for full information.
+
+%%% PAGE DIMENSIONS
+\usepackage{geometry} % to change the page dimensions
+\geometry{a4paper} % or letterpaper (US) or a5paper or....
+% \geometry{margin=2in} % for example, change the margins to 2 inches all round
+% \geometry{landscape} % set up the page for landscape
+%   read geometry.pdf for detailed page layout information
+
+\usepackage{graphicx} % support the \includegraphics command and options
+
+% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+
+%%% PACKAGES
+\usepackage{booktabs} % for much better looking tables
+\usepackage{array} % for better arrays (eg matrices) in maths
+\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+% These packages are all incorporated in the memoir class to one degree or another...
+\setlength{\textwidth}{150mm}
+\setlength{\textheight}{250mm}
+\setlength{\oddsidemargin}{6mm}
+\setlength{\evensidemargin}{28mm}
+\setlength{\topmargin}{-15mm}
+%%% HEADERS & FOOTERS
+\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+\pagestyle{fancy} % options: empty , plain , fancy
+\renewcommand{\headrulewidth}{0pt} % customise the layout...
+\lhead{Aleatorización Sesgada}\chead{}\rhead{PEC2}
+\lfoot{}\cfoot{\thepage}\rfoot{}
+
+%%% SECTION TITLE APPEARANCE
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+% (This matches ConTeXt defaults)
+
+%%% ToC (table of contents) APPEARANCE
+\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+
+%%% END Article customizations
+
+%%% The "real" document content comes below...
+
+\title{Aleatorización Sesgada}
+\author{Alvarez Estarlich, Mauro \\ Requero Martín, David \\ Serrano Gómez, Enrique}
+%\date{} % Activate to display a given date or no date (if empty),
+         % otherwise the current date is printed 
+
+\begin{document}
+\maketitle
+
+\section{Resumen y Comentario}
+
+\subsection{On the use of Monte Carlo simulation, cache and splitting techniques to improve the Clarke and Wright Savings heuristics (Juan, A. et. al. (2011))}
+
+El transporte por carretera es el principal modo de transporte de bienes y se necesitan modelos y métodos eficientes para ayudar en los procesos de toma de decisiones de este campo.\\[0.2cm]
+El artículo habla sobre el Capacitated Vehicle Routing Problem (CVRP) del cual el objetivo principal es encontrar la solución (viable) de mínimo coste. Además, se introduce el algoritmo probabilístico SR-GCWS-CS, con el cual quieren probar como se pueden usar los métodos basados en simulación para mejorar heurísticos existentes.\\[0.2cm]
+\textbf{El algoritmo SR-GCWS-CS}\\[0.2cm]
+Combina la simulación de Monte Carlo (MCS) con el heurístico de ahorros Clarke and Wright (CWS). Además, utiliza técnicas de “Divide y vencerás” y memoria cache de soluciones obtenidas. De esta manera, puede proveer, de manera eficiente, un conjunto de soluciones pseudo-óptimas para CVRP. \\[0.2cm]
+\textbf{Combinación de MCS con CWS}\\[0.2cm]
+Este método asigna una probabilidad sesgada, con ruido, a cada arista en la lista de ahorros de CWS. Aristas con mayores ahorros tendrán más probabilidad de ser escogidas antes para combinarse.\\[0.2cm]
+Para cada ruta generada, el mejor orden de viaje conocido entre los nodos se guarda en una especie de memoria cache. Esto se usa para mejor la calidad de generación de futuras rutas.\\[0.2cm]
+El conjunto original de nodos se divide en subconjunto disjuntos y se resuelven de manera independiente para después generar la solución global.\\[0.2cm]
+Este método híbrido ofrece ventajas sobre otros metaheurísticos:
+\renewcommand{\labelenumi}{\alph{enumi}}
+ \begin{enumerate}
+   \item) Simple.
+   \item) Metodología flexible y robusta.
+   \item) Buen rendimiento generando soluciones.
+   \item) No requiere ajustes de alta precisión.
+   \item) Se puede ejecutar en paralelo.
+ \end{enumerate}
+
+\textbf{Valoración}\\[0.2cm]
+Es un artículo bien estructurado ya que responden a la mayoría de las preguntas que alguien se podría hacer al leerlo: Qué problema hay, en que consiste, como se ha solucionado y que métodos se han utilizado anteriormente, como lo van a solucionar ellos y por qué lo hacen así, etc.\\[0.2cm]
+Aparte de la estructura, las explicaciones están bien hechas, dando contexto a cada nuevo concepto/término para utilizarlo más adelante. Además, da referencias para que el lector profundice si lo desea y es sencillo de entender. Hubiera sido interesante que cogieran una instancia pequeña como ejemplo y que mostraran como cambian las rutas en cada optimización añadida (CWS +MCS, CWS + MCS + Hash map, CWS + MCS + Hash map + Split ). 
+
+\subsection{The SR-GCWS hybrid algorithm for solving the capacitated vehicle routing problem. (Juan, A. et. al. (2010))}
+
+El artículo presenta un nuevo planteamiento para encontrar soluciones al “capacitated vehicle routing problem” (CVRP). Para ello introducen el concepto de Clarke and Wright Savings (CWS), que es usado para asignar una puntuación a cada arista en función del “ahorro” que supone seleccionarlo para moverse de un nodo a otro, siempre y cuando no se violen las reglas establecidas por el problema. También se añade la técnica de Monte Carlo simulation (MCS) ya que se ha visto que resulta muy útil a la hora de resolver problemas complejos mediante el uso de números aleatorios y distribuciones estadísticas.\\[0.2cm]
+Poniéndolo todo junto, para cada paso en el que se deba seleccionar una nueva arista, primero se seleccionan aquellas que tengan un mayor “ahorro” y a cada una de ellas se le asigna una probabilidad de ser seleccionada (mayor probabilidad a los que presenten un “ahorro” mayor). La probabilidad que se asignará vendrá determinada por una distribución (cuasi-) geométrica, también seleccionada de un conjunto de distribuciones posibles. En concreto, el punto clave es la generación de cientos de soluciones posibles, cada una de ellas generada a partir de una versión aleatorizada de la solución obtenida por CWS. Con todo ello, se consigue un algoritmo altamente explorativo que es capaz de mejorar los resultados obtenidos por los algoritmos más vanguardistas, dentro de un periodo de tiempo aceptable.\\[0.2cm]
+
+\textbf{Valoración}\\[0.2cm]
+
+El artículo plantea un algoritmo con claras ventajas frente a los algoritmos clásicos de optimización: es sencillo tanto en cuanto a la complejidad de programación como a las técnicas y conceptos que lo fundamentan, además no requiere de “tunning” de parámetros para obtener mejores resultados, por lo que se acorta el tiempo de experimentación para llegar a una solución subóptima pero aceptable cuando se compara con los mejores resultados obtenidos hasta la fecha. En cuanto a la redacción y la forma de presentar los diferentes conceptos, utilizando un lenguaje fácilmente comprensible, evitando un gran número de siglas y acrónimos, hace que la lectura no sea pesada y que el lector sea capaz de comprender los principales conceptos e ideas que se quieren transmitir. Queda por explorar el potencial de adaptación de esta solución para otros problemas de otros ámbitos.
+
+\clearpage
+
+\subsection{Biased Randomization of Heuristics using Skewed Probability Distributions: a survey and some applications (Grasas, A. et. al. (2017))}
+
+La aleatorización sesgada (BRP) se platea como una solución al problema de obtener algoritmos más exploratorios que permitan obtener soluciones a lo largo de todo el dominio del problema, fuera del intervalo situado en torno a un óptimo local. Se puede implementar empleando funciones empíricas o a través del uso de uso de distribuciones de probabilidad sesgadas. El primer caso se basa en una función sesgada con un criterio que asigna un peso a cada candidato, a partir de los cuales se genera una distribución de probabilidad empírica. Sin embargo, el segundo caso presenta dos ventajas fundamentales: las distribuciones de probabilidad teóricas suelen ser función de un único parámetro fácilmente definible y se disponen de fórmulas analíticas para la obtención sus valores, que son más eficientes a nivel computacional al evitar el uso de bucles. La variación de dicho parámetro a partir de sus dos valores extremos permite obtener una selección más aleatoria o más sesgada. Empleando paralelización se pueden obtener numerosas soluciones candidato, lo cual resulta beneficioso para aplicaciones en las que le tiempo es un factor crítico. Se han implementado de forma experimental en cinco problemas de optimización con heurísticas constructivas (VRP, ARP, PFSP, UFLP, y 2DSPP). Se obtienen mejores resultados a mayor tiempo de ejecución y mayor número de agentes en paralelo. Además, se observa una mejora en los resultados frente a la heurística original, y en comparación con la aleatorización uniforme, donde se obtiene un resultado bastante deficiente en la mayoría de casos. \\[0.2cm]
+
+\textbf{Valoración}\\[0.2cm]
+
+El artículo expone de un método para evitar que en el proceso de selección aleatoria empleado en la elección de soluciones candidato se descarten soluciones plenamente válidas. Se explican dos formas de introducción de sesgo en BRPs: con distribuciones empíricas o con distribuciones de probabilidad teórica, lo que permite al lector entender las principales diferencias entre ambos procedimientos a través de distintos casos particulares, exponiéndose las ventajas de cada caso. Posteriormente a través de cinco problemas de optimización combinatoria se presentan de forma cuantitativa las ventajas anteriormente anunciadas. Se muestra la sensibilidad de la respuesta de cada problema individual ante los distintos parámetros de entrada, una comparación de BRP con otros procedimientos. Esto proporciona una dimensión práctica a través de ejemplos a la exhaustiva introducción teórica anterior. Gracias a esto cualquier lector independientemente de su trasfondo es capaz de entender e interpretar mejoras del procedimiento expuesto en el artículo.
+
+\clearpage
+
+{\fontsize{50}{60}\selectfont Diseño y desarrollo de un algoritmo de busqueda randomizada y heuristica CWS aplicada al VRP}
+
+\renewcommand{\labelenumi}{\arabic{enumi}}
+ \begin{enumerate}
+   \item) \textbf{Introducción}\\[0.2cm]
+El problema del rutaje de vehiculos (VRP de sus siglas en inglés) se centra en la busqueda del mejor conjunto de rutas por las que guiar a una flota de vehiculos de mercancias cuyo deber es abastecer a los clientes. Pero el problema puede ser planteado con diferentes grados de complejidad en funcion de las restricciones y detalles que se quieran considerar con tal de asemejar el sistema cada vez mas al mundo real. Las principales restricciones que se aplican al VRP se basan en:
+   \begin{itemize}
+       \item El uso de vehiculos con una capacidad finita en cuanto al transporte de mercancias.
+       \item Que los vehiculos no pueden visitar dos veces un mismo cliente en su ruta de reparto.
+       \item La presencia de un almacen desde del que todos los vehiculos salen y al que deben volver tras el reparto.
+   \end{itemize} 
+El VRP tiene un gran interes tanto por los beneficios económicos que puede reportar, asi como por los beneficios ecológicos que se pueden deducir del mismo.
+   \item) \textbf{Revisión de la literatura}\\[0.2cm]
+Para el desarrollo de nuestro algoritmo nos hemos basado en la revision de tres articulos: Juan, A. et. al. (2010) (1), Juan, A. et. al. (2011) (2) y Grasas, A. et. al. (2017) (3).\\
+En el primer trabajo (1) demuestra como el uso de Clarke and Wright Savings (CWS) y simulaciones de Monte Carlo (MCS) favorecen la busqueda de soluciones con un menor "coste" y además se introduce el uso de funciones (cuasi-) geométricas para la asignación de probabilidades a los candidatos a mejor ruta. Con este enfoque se consigue que el mejor canidato pueda o no ser elegido, ya que se le asigna una probabilidad (mas elevada en funcion de la calidad de la solución) para que sea o no seleccionado.\\
+En el segundo articulo (2) del mismo autor, a parte de la técnicas descritas anteriormente se añade el concepto de "splitting", basado en el principio de "divide y vencerás", por el cual se subdivide el conjunto de nodos en subgrupos para ser procesados de manera independiente y después unir las diferentes subsoluciones obtenidas en una solución única. Grácias a este planteamiento se consigue obtener soluciones donde las rutas se cruzan con menor frecuencia, es simple y permite ser ejecutado en paralelo.\\
+En el articulo más reciente (3), se plantea el uso de la aleatorización sesgada como medida para obtener un algoritmo más explorativo, permitiendo obtener soluciones a lo largo de todo el dominio del problema. Para ello se plantean dos maneras de obtener distribuciones de probabilidad sesgadas, la primera basada en la obtención empirica y la segunda (y preferida) la basada en distribuciones teóricas generadas a partir de funciones matemáticas. Esta segunda opción es más rápida a nivel computacional y configurable a partir de los parametros que definen la función de distribución.
+
+\clearpage
+
+   \item) \textbf{Algoritmo desarrollado}\\[0.2cm]
+A partir del algoritmo \textit{Clarke and Wright Savings} (CWS) hemos añadido 3 métodos que pueden ser independientes y combinados unos con otros, para mejorar la solución inicial que nos proporciona el algoritmo básico.
+\begin{itemize}
+\item Inicio sesgado.
+\item Método de aprendizaje utilizando una memoria de rutas.
+\item Método “Divide y vencerás”.
+\end{itemize}
+El algoritmo básico tiene 3 fases:
+\renewcommand{\labelenumii}{\arabic{enumii}}
+\begin{enumerate}
+\item Construir las aristas entre los nodos, calculando un coste asociado al movimiento entre nodos, este coste se usa como concepto de ahorro. Se genera una lista ordenada de las aristas que suponen mayor ahorro a menos ahorro.
+\item Construir una solución inicial con rutas desde el nodo inicial al nodo destino, solución que no es eficiente, pero es el punto de partida para ejecutar el siguiente paso.
+\item Se itera la lista de aristas creada y se comprueba si es factible fusionar las rutas que hay desde el nodo inicial a cada nodo en los extremos de la arista. Al fusionar las rutas se consigue ahorrar costes y se empieza intentando fusionar las rutas mas costosas (que producen más ahorro).
+\end{enumerate}
+
+En este algoritmo básico aplicamos \textbf{inicio sesgado} a la lista de ahorro. Hay dos maneras de hacerlo:
+\begin{enumerate}
+\item El orden de la lista de ahorro es completamente aleatorio. Cada arista tiene la misma probabilidad de ser analizada y fusionada la ruta de sus nodos primero.
+A este caso se le puede limitar la aleatoriedad limitando cuantas aristas tiene en cuenta. Por ejemplo, la elección de aristas es completamente aleatoria pero solo entre las 10 aristas que suponen mayor ahorro.
+\item El orden de la lista de ahorro es aleatorio con una probabilidad sesgada. Esto significa que las aristas con mayor ahorro tendrán mas probabilidad de ser elegidas primero.
+Podemos modificar cuanto sesgo queremos utilizar con un valor Beta. Utilizando una Beta pequeña el sesgo para elegir aristas de mayor ahorro es menor y con una Beta grande el sesgo es mayor y la elección de aristas se asemeja al algoritmo básico.
+\end{enumerate}
+Nosotros hemos utilizado el segundo método basándonos en la literatura investigada. El código que nos modificaba la lista de ahorro según el valor Beta es el siguiente:
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth, height=3.5cm]{generateBiasedSavingList.png} 
+\label{fig:subim1}
+\end{figure}
+
+Como existe un componente aleatorio, la ejecución de este método ha de ser realizada varias veces para evitar que encontremos una anomalía estadística y que los resultados no sean fiables. Cuantas más veces iteramos las posibles anomalías desaparecen y tenemos un resultado más fiable que no depende de la “suerte” que tengamos con las probabilidades. \\
+
+El \textbf{método de aprendizaje} mediante la cache de rutas se basa en la idea de que en cada iteración se generan rutas distintas con diferente coste (debido al inicio sesgado que utilizamos). \\
+
+Si mantenemos un mapa con las mejores rutas encontradas para determinado conjunto de nodos, podemos mejorar el coste de la solución final encontrada comparando las rutas de la solución con las mejores rutas encontradas. \\
+
+Por ejemplo, quizás nuestra solución final ha encontrado una ruta que implica a los nodos 0,1,2,3,4 en el orden: 0-2-3-4-1. Como hemos guardado la mejor ruta encontrada para cada conjunto de nodos, comprobamos si hay alguna manera de recorrer esos nodos con menor coste, y encontramos que la ruta 0-3-2-1-4 es más “barata” de hacer. Así que sustituiríamos la ruta final de la solución con otra mejor.\\
+
+El código con el que hacemos esta comprobación es el siguiente:
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth, height=4cm]{improveSolutionWithBestRoutesFound.png} 
+\label{fig:subim1}
+\end{figure}
+
+Y la actualización del mapa con rutas mejores así:
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth, height=4cm]{routeHashUpdate.png} 
+\label{fig:subim1}
+\end{figure}
+
+El último método que hemos aplicado es el de \textbf{“Divide y vencerás”}. Este método se basa en la división del problema inicial en subproblemas más pequeños de manera que se pueden calcular soluciones independientes que pueden mejorar las rutas encontradas. Estas soluciones una vez encontradas son juntadas y nos otorgan una solución final al problema.\\
+
+En nuestro caso, la división del problema se hace mediante la localización de los nodos en el espacio. Cada nodo tiene unas coordenadas X e Y de manera que dividimos los nodos por su posición en el mapa.\\
+
+\clearpage
+
+Hemos utilizado cuatro maneras diferentes para dividir los nodos:
+ \begin{enumerate}
+\item Nodos por encima y por debajo de la coordenada Y(0). Genera 2 subgrupos de nodos.
+\item Nodos a la derecha o izquierda de la coordenada X(0). Genera 2 subgrupos de nodos.
+\item Nodos en cada uno de los 4 cuadrantes del eje de coordenadas. Genera 4 subgrupos de nodos.
+\item Nodos en cada uno de los 4 cuadrantes divididos por la diagonal. Genera 8 subgrupos de nodos.
+\end{enumerate}
+
+Este método puede funcionar mejor o peor dependiendo de las características de la red. Por ejemplo, si todos los nodos están por debajo de Y(0) y utilizamos el primer enfoque, solo generaremos un subgrupo de nodos.\\
+Además, hay que tener en cuenta que no siempre la división del problema nos otorgara mejores soluciones.\\
+
+El código para dividir el mapa de nodos y encontrar soluciones independientes es el siguiente:
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth, height=8cm]{splittingCode.png} 
+\label{fig:subim1}
+\end{figure}
+
+Por último, estos 3 métodos pueden combinarse entre ellos para conseguir una mejor solución explotando las posibilidades que nos ofrece cada uno. Hemos hecho diversas pruebas combinando los 3 métodos que aparecen en el siguiente apartado.
+
+\clearpage
+
+   \item) \textbf{Experimento computacional y análisis de resultados}\\[0.2cm]
+
+Hemos realizado pruebas con la combinación de los siguientes parámetros:
+\begin{itemize}
+\item Beta: 0.3, 0.5, 0.8. De esta manera probamos desde un enfoque más aleatorio/exploratorio a uno más conservador.
+\item Uso de la caché de rutas: True/False.
+\item Técnica de subdivisión de la red: Top/Bottom, Left/Right, Cross, Star. 
+\item Número de iteraciones: 100.
+\end{itemize}
+
+Para realizar los experimentos hemos paralelizado el proceso para que podamos hacer todas las pruebas al mismo tiempo. De esta manera se pueden hacer más pruebas ahorrando un tiempo considerable.\\
+A continuación, mostramos para cada $\beta$ en 2 tablas: 
+\begin{itemize}
+\item La primera nos muestra el coste obtenido de la solución conseguida por cada variante del algoritmo para cada instancia.
+\item La segunda muestra el gap entre la solución inicial y la solución obtenida por cada una de las variantes del algoritmo.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth, height=10cm]{table031.png} 
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=\linewidth, height=10cm]{table032.png} 
+\label{fig:subim1}
+\end{figure}
+
+Para $\beta = 0.3$, podemos observar como el uso de la aleatorización sesgada consigue mejorar el coste de la solución inicial para todas las instancias (gap1). Además, vemos como el uso de la cache de rutas ayuda en la mayoría de los casos a conseguir un resultado ligeramente mejor (gap2).\\
+Respecto a la subdivisión del problema, apreciamos que la subdivisión en Star es la que peor funciona, empeorando la solución inicial en todos los casos en los que se aplica (gap6 y gap10). \\
+Las subdivisiones que mejor funcionan son las Top/Bottom y Left/Right, que consiguen mejorar un 40\% de las instancias (gap3 y gap4). El uso de la caché de rutas en estos casos no consigue que más instancias mejoren la solución inicial, pero en general mejora los resultados de las instancias que ya mejoraban antes (gap7 y gap8).\\
+El caso de la subdivisión en Cross no mejora las soluciones (gap5 y gap9), aunque no llega al nivel del caso Star ya que la media de soluciones no está tan alejada del caso base y consigue mejorar 2 instancias en cada gap.
+
+\clearpage
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth, height=10cm]{table051.png} 
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=\linewidth, height=10cm]{table052.png} 
+\label{fig:subim1}
+\end{figure}
+
+Para $\beta = 0.5$ obtenemos unos resultados muy parecidos. La aleatorización sesgada y el uso de la caché de rutas funcionan obteniendo resultados parecidos. La división del problema en Star y Cross sigue sin mejorar las solución original. \\
+La novedad que encontramos es que el la aplicación de la división Top/Bottom y Left/Right consigue mejorar más instancias, llegando a casi un 50\% de las instancias mejoradas.\\
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth, height=10cm]{table081.png} 
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=\linewidth, height=10cm]{table082.png} 
+\label{fig:subim1}
+\end{figure}
+
+Para $\beta = 0.8$, que es el caso más cercano a un comportamiento greedy como tiene el algoritmo base. Vemos que la aleatorización sesga y el uso de la caché de rutas siguen consiguiendo mejorar la solucion original en la mayoria de los escenarios. Observamos que la diferencia de coste comparandola con la solución inicial es menor. Al acercarnos al comportamiento base reducimos la diferencia entre las soluciones.\\
+Con la subdivisión de las rutas apreciamos el mismo comportamiento. Para los casos que tenían instancias mejoradas, estas siguen estando entre el 40 y 50\% pero el margen de mejora es menor.
+
+   \item) \textbf{Conclusiones y trabajo futuro}\\[0.2cm]
+
+A partir de los resultados obtenidos podemos concluir que:
+
+\begin{itemize}
+\item El uso de la randomizacion sesgada + cache de rutas es la mejor opción a la hora de mejorar los resultados obtenidos del algoritmo original.
+\item El parámetro que genera mejores resultados a la hora de aplicar randomización sesgada es la $\beta  = 0.5$.
+\item La subdivisión de los nodos solo consigue mejorar las soluciones en un bajo porcentaje de las topologías, por lo que puede que exista una dependencia entre el tipo de topología y la mejor sectorización a aplicar, aunque a priori no se observa un patrón evidente.
+\item La paralelización de la ejecucion de algunas partes del algoritmo llegan a reducir el tiempo de ejecución de todos los casos de test, sobre todas las instancias estudiadas, de manera considerable. Toda la ejecución y generación de tablas de resultados se realizó en un tiempo medio de 20 min (este valor puede variar en función del hardware utilizado).
+\end{itemize}
+
+Como trabajo futuro proponemos: 
+
+\begin{itemize}
+\item Estudiar si con un mayor numero de iteraciones, se mejoran de manera significativa los resultados obtenidos y en que punto las soluciones dejan de mejorar.
+\item Explorar para valores de $\beta$ entre 0.4 y 0.6, si las soluciones mejoran.
+\item Analizar si existe una dependencia entre la topologia de la red y el tipo de subdivisión aplicado y determinar que método es el mas adecuado para cada caso.
+\item Aplicar diferentes métodos de splitting más complejos y elaborados en función de la topología de la red.
+\item Determinar que areas de la ejecución pueden ser paralelizadas para mejorar el rendimiento de la ejecución del algoritmo.
+\end{itemize}
+
+ \end{enumerate}
+
+\end{document}
