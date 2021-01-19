@@ -21,7 +21,7 @@ class HeuristicSequential:
     
     def __init__(self, instanceName, vehCap, nodeMatrix):
         self.instanceName=instanceName
-        self.vehCap = vehCap
+        self.vehCap = vehCap 
         self.nodes = []
         for nodeData in nodeMatrix:
             # array  data with node data: x, y, demand
@@ -52,9 +52,10 @@ class HeuristicSequential:
         biasedList = self.generateBiasedSavingsList(beta)
         self.edgeSelectionRoutingMerging(biasedList)       
         
-    def generateBiasedSavingsList(self, beta):
+    def generateBiasedSavingsList(self):
         copySavings = self.savingsList.copy()
         biasedSavings = []
+        beta = 0.5
         for i in range( len(copySavings) ):
             index = int( math.log(random.random()) / math.log(1 - beta) )
             index = index % len(copySavings)
@@ -75,6 +76,13 @@ class HeuristicSequential:
             # compute the Euclidean distance as cost
             dnEdge.cost = math.sqrt((node.x - self.depot.x)**2 + (node.y - self.depot.y)**2)
             ndEdge.cost = dnEdge.cost # assume symmetric costs
+            
+            #Data need to take into account number of packages needed at destination
+            dnEdge.demandRequired = node.demand
+            dnEdge.supplyGiven = node.supply
+            ndEdge.demandRequired = 0.0
+            ndEdge.supplyGiven = 0.0
+            
             # save in node a reference to the (self.depot, node) edge (arc)
             node.dnEdge = dnEdge
             node.ndEdge = ndEdge
@@ -91,6 +99,13 @@ class HeuristicSequential:
                 # compute the Euclidean distance as cost
                 ijEdge.cost = math.sqrt((jNode.x - iNode.x)**2 + (jNode.y - iNode.y)**2)
                 jiEdge.cost = ijEdge.cost # assume symmetric costs
+                
+                #Data need to take into account number of packages needed at destination
+                ijEdge.demandRequired = jNode.demand
+                ijEdge.supplyGiven = jNode.supply
+                jiEdge.demandRequired = iNode.demand
+                jiEdge.supplyGiven = jNode.supply
+                
                 # compute savings as proposed by Clark & Wright
                 ijEdge.savings = iNode.ndEdge.cost + jNode.dnEdge.cost -ijEdge.cost
                 jiEdge.savings = ijEdge.savings
@@ -107,23 +122,23 @@ class HeuristicSequential:
             ndEdge = node.ndEdge
             dndRoute = Route() # construct the route (self.depot, node, self.depot)
             dndRoute.edges.append(dnEdge)
-            dndRoute.demand += node.demand
+            capActual = self.vehCap/2 # Start with half of the capacity on the truck to be able to pick-up and deliver at the same time since the start.
+            capActual -= dnEdge.demandRequired
+            capActual += dnEdge.supplyGiven
             dndRoute.cost += dnEdge.cost
             dndRoute.edges.append(ndEdge)
+            capActual -= ndEdge.demandRequired
+            capActual += ndEdge.supplyGiven
             dndRoute.cost += ndEdge.cost 
+            #Demand now refers to how many packages contains the vehicle
+            #Vehicle will continue until can't serve any more nodes without refilling at depot.
+            dndRoute.demand = capActual
             node.inRoute = dndRoute # save in node a reference to its current route
             node.isInterior = False # this node  is  currently exterior (connected to self.depot)
             self.sol.routes.append(dndRoute) # add this  route to the solution
             self.sol.cost += dndRoute.cost
             self.sol.demand += dndRoute.demand
             
-            if( self.enabledRouteCacheUsage ):
-                self.bestSol = copy.deepcopy( self.sol );
-                #initial bestRoutes
-                routeIds = [0, dnEdge.end.ID]
-                routeIds.sort();
-                routeKey = str(0) + "_" + str(dnEdge.end.ID)
-                self.bestRoutes[routeKey] = copy.deepcopy(dndRoute)
     
     def checkMergingConditions(self, iNode, jNode, iRoute, jRoute):
         # condition 1 : iRoute and jRoute  are not the  same route  object
@@ -131,7 +146,8 @@ class HeuristicSequential:
         # conditions 2: both nodes are exteriornodes in their respective routes
         if iNode.isInterior == True or jNode.isInterior == True: return False
         # condition 3: demand after merging can be covered by a single vehicle
-        if self.vehCap < iRoute.demand + jRoute.demand: return False
+        # This means that the vehicle still has the right number of packages to pickup and deliver to other nodes before resetting at depot.
+        if self.vehCap < iRoute.demand + jRoute.demand && 0 > iRoute.demand + jRoute.demand: return False
         # else, merging is feasible
         return True
     
@@ -193,17 +209,6 @@ class HeuristicSequential:
                 # delete jRoute from emeging solution
                 self.sol.cost -= ijEdge.savings
                 self.sol.routes.remove(jRoute)
-                
-                #populate bestRoutes
-                if( self.enabledRouteCacheUsage ):
-                    #create hash to search for the route
-                    routeKey = self.getRouteHash( iRoute )
-                        
-                    if routeKey in self.bestRoutes.keys():
-                        if self.bestRoutes[routeKey].cost > iRoute.cost:
-                            self.bestRoutes[routeKey] = copy.deepcopy( iRoute )
-                    else:
-                        self.bestRoutes[routeKey] =  copy.deepcopy( iRoute )
   
     def getCost(self):
         return self.sol.cost

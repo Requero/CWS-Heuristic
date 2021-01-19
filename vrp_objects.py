@@ -19,6 +19,8 @@ class Edge:
         self.end = end # end node of the edge (arc)
         self.cost = 0.0  # edge cost
         self.savings = 0.0 # edge savings (Clarke & Wright)
+        self.demandRequired = 0.0 # Demand of the end node
+        self.supplyGiven = 0.0 # Supply of the end node
         self.invEdge = None # inverse edge (arc)
 
 
