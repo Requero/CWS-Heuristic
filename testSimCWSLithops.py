@@ -105,11 +105,54 @@ def generateAdditionalData(instanceData):
     supply_mean = np.ceil(demand_mean * f1)
     demand_desv = np.ceil(demand_mean*np.absolute(1-f1))
     supply_desv = np.ceil(supply_mean*np.absolute(1-f2))
+    #print(demand_mean**2/demand_desv**2)
+    #print(supply_mean**2/supply_desv**2)
     df['demand_desv'] = np.insert(demand_desv, 0, 0)
     df['supply_mean'] = np.insert(supply_mean, 0, 0)
     df['supply_desv'] = np.insert(supply_desv, 0, 0)
     df.to_csv(r'./instancesmod/'+instanceName+'_'+str(int(capacity))+'.csv', index=False)
-                    
+
+#Districuión beta para el caso en el que 0.65 < mu**2/sigma**2 < 15
+def beta(mean, std):
+    n = 1000
+    mu = mean/n
+    sigma = std/n
+    alfa = abs(((1-mu)/(sigma**2)-(1/mu))*mu**2)
+    beta = abs(alfa*((1/mu)-1))
+    return 1000*np.random.beta(alfa, beta)
+
+def costsStocksSimulation(instanceFile, cost_demand, cost_supply, isStochastic, nIterations):
+    df = pandas.read_csv('/instancesmod/'+str(instanceFile)+'.csv', encoding='utf-8')
+    dfCosts = pd.DataFrame(columns = ['costs'])
+    dfCostsTemp = pd.DataFrame()
+    if isStochastic:
+        for j in range(0,nIterations):
+            dfCostsTemp.insert(loc=0, column='cost_'+str(j))
+            for i in len(df):
+                demand_mean = df['demand_mean'][i]
+                demand_desv = df['demand_desv'][i]
+                supply_mean = df['supply_mean'][i]
+                supply_desv = df['supply_desv'][i]
+                factor1 = demand_mean**2/demand_desv**2
+                factor2 = supply_mean**2/supply_desv**2
+                if factor1 < 15:
+                    demand = beta(demand_mean, demand_desv) 
+                else:
+                    demand = numpy.random.lognormal(demand_mean, demand_desv)
+                if factor2 < 15:
+                    supply = beta(supply_mean, supply_desv) 
+                else:
+                    supply = numpy.random.lognormal(supply_mean, supply_desv)
+                dfCostsTemp['cost_'+str(j)][i] = demand * cost_demand + supply * cost_supply
+        dfCosts = dfCostsTemp.mean(axis=1)    
+    else:
+        for i in len(df):
+            if i == 0:
+                dfCosts['costs'][i] = 0
+            else:
+                dfCosts['costs'][i] = df['demand_mean'][i]*cost_demand + df['supply_mean'][i]*cost_supply
+    return dfCosts
+
 def SimCWS(buckets):
 
     files = []
