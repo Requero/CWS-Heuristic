@@ -25,38 +25,20 @@ class HeuristicSequential:
         self.nodes = []
         for nodeData in nodeMatrix:
             # array  data with node data: x, y, demand
-            self.nodes.append(Node(nodeData[0], nodeData[1], nodeData[2], nodeData[3]))
-        self.bestRoutes = {} # best routes regarding cost 
-        self.enabledRouteCacheUsage = False
+            self.nodes.append(Node(nodeData[0], nodeData[1], nodeData[2], nodeData[3], nodeData[4]))
     
-    def runCWSSolGeneral(self, beta = 0.0, RCU = False, splittingType= "Null"):
+    def runCWSSolGeneral(self, beta = 0.0):
         self.sol = Solution()
-        if RCU == True:
-            self.enabledRouteCacheUsage = True
         if beta == 0.0:
             self.constructEdges(self.nodes)
             self.constructDummySolution(self.nodes) 
             self.edgeSelectionRoutingMerging(self.savingsList)
-        elif splittingType == "Null":
+        else:
             self.constructEdges(self.nodes)
             self.constructDummySolution(self.nodes) 
             biasedList = self.generateBiasedSavingsList(beta)
             self.edgeSelectionRoutingMerging(biasedList)
             
-            if( self.enabledRouteCacheUsage ):
-                self.improveSolutionWithBestRoutesFound()
-        else:
-            splt_Nodes = self.runSplitting(splittingType)
-            for splt_node in splt_Nodes:
-                self.bestRoutes = {}
-                self.constructEdges(splt_node)
-                self.constructDummySolution(splt_node)
-                biasedList = self.generateBiasedSavingsList(beta)
-                self.edgeSelectionRoutingMerging(biasedList)
-                
-                if( self.enabledRouteCacheUsage ):
-                    self.improveSolutionWithBestRoutesFound()  
-        
     def runCWSSol(self):
         self.sol = Solution()
         self.constructEdges(self.nodes)
@@ -68,130 +50,7 @@ class HeuristicSequential:
         self.constructEdges(self.nodes)
         self.constructDummySolution(self.nodes) 
         biasedList = self.generateBiasedSavingsList(beta)
-        self.edgeSelectionRoutingMerging(biasedList)
-        
-        if( self.enabledRouteCacheUsage ):
-            self.improveSolutionWithBestRoutesFound()
-        
-    def runSplittingSol(self, beta=0.3, splittingType="TopBottom" ):
-        self.sol = Solution()
-        splt_Nodes = self.runSplitting(splittingType)
-        
-        for splt_node in splt_Nodes:
-            self.bestRoutes = {}
-            self.constructEdges(splt_node)
-            self.constructDummySolution(splt_node)
-            biasedList = self.generateBiasedSavingsList(beta)
-            self.edgeSelectionRoutingMerging(biasedList)
-            
-            if( self.enabledRouteCacheUsage ):
-                self.improveSolutionWithBestRoutesFound()
-                
-    def runSplitting(self, splittingType):
-        splittingTypes = ['TopBottom', 'LeftRight', "Cross", "Star"]
-        splt_Nodes = []
-        if splittingType not in splittingTypes:
-            raise ValueError("Invalid sim type. Expected one of: %s" % splittingTypes)
-        if splittingType == "TopBottom":
-            splt_Nodes = self.splitTopBottomNodes()
-        if splittingType == "LeftRight":
-            splt_Nodes = self.splitLeftRightNodes()
-        if splittingType == "Cross":
-            splt_Nodes = self.splitCrossNodes()
-        if splittingType == "Star": #8 cuadrants
-            splt_Nodes = self.splitStarNodes()
-        return splt_Nodes
-    
-    def startInstance(self):
-        self.constructEdges(self.nodes)
-        self.sol = Solution()
-        
-    def enableRCU(self):
-        self.enabledRouteCacheUsage = True
-        
-    def splitTopBottomNodes(self): 
-        #Split the nodes depending on their position with respect to the Y axis.
-        splitted_nodes = [[self.nodes[0]], [self.nodes[0]]] #Depot node is included in both splitted lists
-        for node in self.nodes[1:]:
-            if node.y >= 0: #Positive Y nodes will be added to the first list
-                splitted_nodes[0].append(node)
-            else: #Negative Y nodes will be added to the second list
-                splitted_nodes[1].append(node)
-        return splitted_nodes
-
-    def splitLeftRightNodes(self): 
-        #Split the nodes depending on their position with respect to the X axis.
-        splitted_nodes = [[self.nodes[0]], [self.nodes[0]]] #Depot node is included in both splitted lists
-        for node in self.nodes[1:]:
-            if node.x >= 0: #Positive X nodes will be added to the first list
-                splitted_nodes[0].append(node)
-            else: #Negative X nodes will be added to the second list
-                splitted_nodes[1].append(node)
-        return splitted_nodes
-        
-    def splitCrossNodes(self): 
-        #Split the nodes depending on their position with respect to the X  and Y axis.
-        splitted_nodes = [[self.nodes[0]], [self.nodes[0]], [self.nodes[0]], [self.nodes[0]]]#Depot node is included in all splitted lists
-        for node in self.nodes[1:]:
-            if node.x >= 0 and node.y >=0: #Positive cuadrant nodes will be added to the first list
-                splitted_nodes[0].append(node)
-            if node.x >= 0 and node.y < 0: #Positive X and negative Y nodes will be added to the second list
-                splitted_nodes[1].append(node)
-            if node.x < 0 and node.y < 0: #Negative X and negative Y nodes will be added to the third list
-                splitted_nodes[2].append(node)
-            if node.x < 0 and node.y >=0: #Negative X and positive Y nodes will be added to the forth list
-                splitted_nodes[3].append(node)
-        return splitted_nodes
-
-    def splitStarNodes(self): 
-        splitted_nodes = [[self.nodes[0]], [self.nodes[0]], [self.nodes[0]], [self.nodes[0]], 
-                          [self.nodes[0]], [self.nodes[0]], [self.nodes[0]], [self.nodes[0]]] 
-        #Depot node is included in all splitted lists
-        for node in self.nodes[1:]:
-            if node.x >= 0 and node.y >=0: #Positive cuadrant
-                if node.x >= node.y:
-                    splitted_nodes[0].append(node)
-                else:
-                    splitted_nodes[1].append(node)
-            if node.x >= 0 and node.y < 0: #Positive X and negative Y
-                if abs(node.x) >= abs(node.y):
-                    splitted_nodes[2].append(node)
-                else:
-                    splitted_nodes[3].append(node)
-            if node.x < 0 and node.y < 0: #Negative X and negative Y
-                if abs(node.x) >= abs(node.y):
-                    splitted_nodes[4].append(node)
-                else:
-                    splitted_nodes[5].append(node)
-            if node.x < 0 and node.y >=0: #Negative X and positive Y
-                if abs(node.x) >= abs(node.y):
-                    splitted_nodes[6].append(node)
-                else:
-                    splitted_nodes[7].append(node)
-        return splitted_nodes
-
-    def getRouteHash(self, route ):
-        routeIds = [0]
-        for edge in route.edges:
-            routeIds.append(edge.end.ID);
-        routeIds.sort()
-        
-        routeKey = str(0)
-        for x in routeIds[1:]:
-            routeKey += "_" + str(x)
-            
-        return routeKey
-        
-    def improveSolutionWithBestRoutesFound(self):
-        for route in self.sol.routes:
-            routeKey = self.getRouteHash( route )
-        
-            if routeKey in self.bestRoutes.keys():
-                if self.bestRoutes[routeKey].cost < route.cost:
-                    self.sol.cost -= route.cost
-                    self.sol.cost += self.bestRoutes[routeKey].cost
-                    route = self.bestRoutes[routeKey]
-            
+        self.edgeSelectionRoutingMerging(biasedList)       
         
     def generateBiasedSavingsList(self, beta):
         copySavings = self.savingsList.copy()
@@ -366,17 +225,6 @@ class HeuristicSequential:
             for edge in route.edges:
                 s = s + '-' + str(edge.end.ID)
             print('Route: ' + s + ' || cost = ' + "{:{}f}".format(route.cost,2))
-    
-    def printBestRoutes(self):
-        print( "-------------------------------------" )
-        print( "Instance: " + self.instanceName )
-        for route in sorted( self.bestRoutes.keys() ):
-            s = str(0)
-            for edge in self.bestRoutes[route].edges:
-                s = s + '-' + str(edge.end.ID)
-            print('Route ' + str(route) + ': ' + s + ' || cost = ' + "{:{}f}".format( self.bestRoutes[route].cost,2 ) )
-        
-        print( "-------------------------------------" )
     
     def printRouteCostsBestSolution(self, sol):
         print('Instance: '+ self.instanceName)

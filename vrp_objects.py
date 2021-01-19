@@ -1,10 +1,11 @@
 class Node:
     
-    def __init__(self, ID, x, y, demand):
+    def __init__(self, ID, x, y, demand, supply):
         self.ID = ID # node identifier (depot ID = 0)
         self.x = x # Euclidean x-coordinate
         self.y = y # Euclidean y-coordinate
-        self.demand = demand # demannd (is 0 for depot and positive for others)
+        self.demand = demand # demand (is 0 for depot and positive for others)
+        self.supply = supply # supply (is 0 for depot and positive for others)
         self.inRoute = None # route to which node belongs
         self.isInterior = False # an interior node is not connected to depot
         self.dnEdge = None  # edge (arc) from depot   to this node
