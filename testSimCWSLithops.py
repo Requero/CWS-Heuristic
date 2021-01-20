@@ -175,8 +175,8 @@ def readCsvInstances(filename):
         for line in instance:
             # array  data with node data: x, y, demand
             data = [float(x) for x in line.split(",")]
-            demand, supply = setDemandAndSupply(data[3], data[4], data[5], data[6])
-            nodeMatrix.append([data[0], data[1], data[2], demand, supply])
+
+            nodeMatrix.append([data[0], data[1], data[2], data[3], data[5]]) #Deterministic
     return (instanceName, vehicle_capacity, nodeMatrix)
 
 def SimCWS(buckets):
