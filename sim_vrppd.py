@@ -178,36 +178,35 @@ def generateDeterministicInstances(fileName):
 
 def SimCWS(buckets):
 
-    # if True == False:
-    #     files = []
-    #     spec_storage = Storage()
-    #     #'bucketlithops',
-    #     for i in buckets:
-    #         try:
-    #             files = spec_storage.list_objects(bucket  =i, prefix='instances/')
-    #             bucket = i
-    #             print(i + ' available')
-    #         except:
-    #             print(i + ' not available')
-    #     #files = spec_storage.list_objects(bucket  =bucket, prefix='instances/')
-    #     #print(files)
-    #     del files[0]
-    #
-    #     runtime  = 'lithopscloud/ibmcf-python-v38:2021.01'
-    #     #Read instances
-    #     fexec = lth.FunctionExecutor(runtime=runtime)
-    #     #paramlist = list(it.product(['bucketlithops'],[vehCaps], files))
-    #     paramlist = [[bucket, vehCaps, file] for file in files]
-    #     fexec.map(readInstances, paramlist)
-    #     instanceData = fexec.get_result()
-    #     #fexec.plot(dst='lithops_plots/Read')
-    #     fexec.clean()
-    #     #print(futs[0].status())
-    #     shutil.rmtree('./instancesmod')
-    #     os.mkdir('./instancesmod')
-    #
-    # shutil.rmtree('./output')
-    # os.mkdir('./output')
+    #Read instances from the cloud and generate additional data
+    readAndGenerateModifiedInstances = False
+    if readAndGenerateModifiedInstances:
+        files = []
+        spec_storage = Storage()
+        for i in buckets:
+            try:
+                files = spec_storage.list_objects(bucket  =i, prefix='instances/')
+                bucket = i
+                print(i + ' available')
+            except:
+                print(i + ' not available')
+        del files[0]
+        runtime  = 'lithopscloud/ibmcf-python-v38:2021.01'
+        #Read instances
+        fexec = lth.FunctionExecutor(runtime=runtime)
+        paramlist = [[bucket, vehCaps, file] for file in files]
+        fexec.map(readInstances, paramlist)
+        instanceData = fexec.get_result()
+        fexec.plot(dst='lithops_plots/Read')
+        fexec.clean()
+        shutil.rmtree('./instancesmod')
+        os.mkdir('./instancesmod')
+        #Add supply and deviations
+        for instance in instanceData:
+            generateAdditionalData(instanceData)
+             
+    shutil.rmtree('./output')
+    os.mkdir('./output')
 
     # Read csvs
     filesmod = os.listdir('instancesmod/')
