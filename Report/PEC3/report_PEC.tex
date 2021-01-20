@@ -254,12 +254,71 @@ Las principales diferencias con respecto al algoritmo presentado en la PEC anter
 \end{figure}
 \end{enumerate}
 
-   \item) \textbf{Experimento computacional y análisis de resultados}\\[0.2cm]
+   \item) \textbf{Experimento computacional y análisis de resultados}
 
-	\begin{figure}[H]
-	\centering
-	\includegraphics[width=\linewidth, height=6cm]{Result1.png} 
-	\end{figure}
+Para la ejecución de los escenarios estocásticos se ha hecho uso de la librería lithops de Python. Dicha librería permite paralelizar la ejecución de funciones haciendo uso de servicios en la nube, en este caso concreto los backends de almacenamiento IBM Cloud Object Storage y de computación serverless IBM Cloud Functions.\\
+En líneas generales su funcionamiento es análogo al módulo de multiprocessing de Python consiguiendo reducir de forma sustancial el tiempo de ejecución del programa incluso haciendo viables ciertas ejecuciones que en un PC convencional no serían viables. En el caso concreto de los backends de IBM se contempla su uso especifico para las aplicaciones de simulación de Monte Carlo y algoritmos genéticos. A pesar de las posibilidades que ofrece lithops, el elevado tamaño de las instancias limita la ejecución a de cada instancia 10 escenarios obtenidos de forma secuencial con 10 ejecuciones cada uno, obtenidas de forma paralela sobre el conjunto de instancias. \\[0.2cm]
+Para el resto de los cálculos se ha empleado el módulo multiprocessing de Python con un procesador Intel Core i7 8750H con 6 núcleos y 12 hilos.\\[0.2cm]
+
+
+	\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrrrrrrr}
+\toprule
+ Instance &  Capacity &  Deterministic &  Stochast 1 &  Stochast 2 &  Stochast 3 &  Stochast 4 &  Stochast 5 &  Stochast 6 &  Stochast 7 &  Stochast 8 &  Stochast 9 &  Stochast 10 \\
+\midrule
+  Kelly01 &       550 &        7684.67 &       7788.49 &       7558.44 &       8075.98 &       7466.39 &       8090.22 &       7215.30 &       7490.09 &       7873.32 &       7584.11 &        7475.39 \\
+  Kelly02 &       700 &       12832.82 &      12018.09 &      11496.08 &      11905.40 &      12121.63 &      11631.46 &      11799.74 &      11717.90 &      11769.51 &      12348.20 &       11815.40 \\
+  Kelly03 &       900 &       17999.64 &      16657.35 &      17724.45 &      17369.22 &      17484.54 &      17131.32 &      16629.10 &      16928.87 &      16827.31 &      16526.58 &       16583.12 \\
+  Kelly04 &      1000 &       24568.32 &      23388.88 &      22963.10 &      23065.68 &      22812.89 &      22922.13 &      23028.95 &      22852.53 &      23513.03 &      23250.35 &       23443.52 \\
+  Kelly05 &       900 &       12028.70 &      12017.52 &      10938.33 &      12002.23 &      11735.23 &      12194.90 &      11762.61 &      11508.92 &      11796.83 &      11786.14 &       11570.85 \\
+  Kelly06 &       900 &       15111.89 &      14565.06 &      13919.27 &      14271.66 &      14319.53 &      14518.98 &      13592.86 &      14070.63 &      13972.92 &      14250.17 &       14468.28 \\
+  Kelly07 &       900 &       17755.14 &      16778.97 &      16174.20 &      16427.46 &      15792.96 &      16246.04 &      15980.06 &      15898.46 &      16770.05 &      16435.53 &       15986.65 \\
+  Kelly08 &       900 &       19181.40 &      17428.92 &      18379.87 &      18303.92 &      17722.80 &      17864.38 &      17699.02 &      17422.82 &      16845.93 &      17366.72 &       18203.13 \\
+  Kelly09 &      1000 &         860.03 &        732.87 &        772.01 &        780.37 &        750.17 &        809.48 &        749.34 &        750.06 &        755.84 &        738.56 &         799.26 \\
+  Kelly10 &      1000 &        1055.21 &        976.83 &        993.54 &        959.12 &        946.75 &        909.13 &        976.66 &        912.34 &        965.07 &        986.04 &         921.24 \\
+  Kelly11 &      1000 &        1271.10 &       1234.05 &       1159.63 &       1150.39 &       1135.97 &       1162.07 &       1176.52 &       1124.47 &       1086.94 &       1122.59 &        1158.15 \\
+  Kelly12 &      1000 &        1476.76 &       1397.21 &       1395.32 &       1321.11 &       1376.15 &       1433.26 &       1358.76 &       1382.22 &       1366.81 &       1376.02 &        1439.75 \\
+  Kelly13 &      1000 &         945.25 &        938.33 &        929.12 &        960.52 &        894.37 &        988.58 &        890.28 &        942.95 &        890.23 &        938.30 &         947.97 \\
+  Kelly14 &      1000 &        1335.68 &       1125.36 &       1225.16 &       1210.27 &       1117.83 &       1192.68 &       1166.51 &       1179.34 &       1221.84 &       1252.89 &        1217.44 \\
+  Kelly15 &      1000 &        1542.05 &       1477.59 &       1399.74 &       1435.03 &       1444.98 &       1463.37 &       1467.92 &       1523.48 &       1459.01 &       1429.63 &        1507.22 \\
+  Kelly16 &      1000 &        1817.43 &       1726.75 &       1731.44 &       1806.69 &       1835.46 &       1762.15 &       1743.33 &       1804.95 &       1762.70 &       1772.10 &        1749.09 \\
+  Kelly17 &       200 &         703.96 &        756.00 &        737.85 &        785.60 &        802.13 &        712.94 &        768.38 &        773.69 &        761.34 &        710.19 &         752.03 \\
+  Kelly18 &       200 &         971.44 &       1002.57 &       1015.81 &       1062.53 &       1049.88 &       1046.82 &       1024.96 &       1063.88 &       1067.26 &       1062.26 &        1024.22 \\
+  Kelly19 &       200 &        1262.29 &       1400.39 &       1418.92 &       1386.35 &       1294.52 &       1375.72 &       1389.26 &       1394.48 &       1358.69 &       1396.61 &        1397.30 \\
+  Kelly20 &       200 &        1712.61 &       1755.78 &       1772.81 &       1752.89 &       1877.90 &       1822.62 &       1780.32 &       1794.92 &       1812.93 &       1685.27 &        1842.59 \\
+\bottomrule
+\end{tabular}}\\[0.2cm]
+
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrrrrrr}
+\toprule
+Instance &  Capacity &   gap1 &   gap2 &   gap3 &   gap4 &   gap5 &   gap6 &   gap7 &   gap8 &   gap9 &  gap10 \\
+\midrule
+  Kelly01 &       550 &   1.35 &  -1.64 &   5.09 &  -2.84 &   5.28 &  -6.11 &  -2.53 &   2.45 &  -1.31 &  -2.72 \\
+  Kelly02 &       700 &  -6.35 & -10.42 &  -7.23 &  -5.54 &  -9.36 &  -8.05 &  -8.69 &  -8.29 &  -3.78 &  -7.93 \\
+  Kelly03 &       900 &  -7.46 &  -1.53 &  -3.50 &  -2.86 &  -4.82 &  -7.61 &  -5.95 &  -6.51 &  -8.18 &  -7.87 \\
+  Kelly04 &      1000 &  -4.80 &  -6.53 &  -6.12 &  -7.15 &  -6.70 &  -6.27 &  -6.98 &  -4.30 &  -5.36 &  -4.58 \\
+  Kelly05 &       900 &  -0.09 &  -9.06 &  -0.22 &  -2.44 &   1.38 &  -2.21 &  -4.32 &  -1.93 &  -2.02 &  -3.81 \\
+  Kelly06 &       900 &  -3.62 &  -7.89 &  -5.56 &  -5.24 &  -3.92 & -10.05 &  -6.89 &  -7.54 &  -5.70 &  -4.26 \\
+  Kelly07 &       900 &  -5.50 &  -8.90 &  -7.48 & -11.05 &  -8.50 & -10.00 & -10.46 &  -5.55 &  -7.43 &  -9.96 \\
+  Kelly08 &       900 &  -9.14 &  -4.18 &  -4.57 &  -7.60 &  -6.87 &  -7.73 &  -9.17 & -12.18 &  -9.46 &  -5.10 \\
+  Kelly09 &      1000 & -14.79 & -10.23 &  -9.26 & -12.77 &  -5.88 & -12.87 & -12.79 & -12.11 & -14.12 &  -7.07 \\
+  Kelly10 &      1000 &  -7.43 &  -5.84 &  -9.11 & -10.28 & -13.84 &  -7.44 & -13.54 &  -8.54 &  -6.55 & -12.70 \\
+  Kelly11 &      1000 &  -2.91 &  -8.77 &  -9.50 & -10.63 &  -8.58 &  -7.44 & -11.54 & -14.49 & -11.68 &  -8.89 \\
+  Kelly12 &      1000 &  -5.39 &  -5.51 & -10.54 &  -6.81 &  -2.95 &  -7.99 &  -6.40 &  -7.45 &  -6.82 &  -2.51 \\
+  Kelly13 &      1000 &  -0.73 &  -1.71 &   1.62 &  -5.38 &   4.58 &  -5.81 &  -0.24 &  -5.82 &  -0.73 &   0.29 \\
+  Kelly14 &      1000 & -15.75 &  -8.27 &  -9.39 & -16.31 & -10.71 & -12.67 & -11.70 &  -8.52 &  -6.20 &  -8.85 \\
+  Kelly15 &      1000 &  -4.18 &  -9.23 &  -6.94 &  -6.30 &  -5.10 &  -4.81 &  -1.20 &  -5.39 &  -7.29 &  -2.26 \\
+  Kelly16 &      1000 &  -4.99 &  -4.73 &  -0.59 &   0.99 &  -3.04 &  -4.08 &  -0.69 &  -3.01 &  -2.49 &  -3.76 \\
+  Kelly17 &       200 &   7.39 &   4.81 &  11.60 &  13.95 &   1.28 &   9.15 &   9.91 &   8.15 &   0.89 &   6.83 \\
+  Kelly18 &       200 &   3.20 &   4.57 &   9.38 &   8.07 &   7.76 &   5.51 &   9.52 &   9.86 &   9.35 &   5.43 \\
+  Kelly19 &       200 &  10.94 &  12.41 &   9.83 &   2.55 &   8.99 &  10.06 &  10.47 &   7.64 &  10.64 &  10.70 \\
+  Kelly20 &       200 &   2.52 &   3.51 &   2.35 &   9.65 &   6.42 &   3.95 &   4.81 &   5.86 &  -1.60 &   7.59 \\
+\bottomrule
+\end{tabular}}\\[0.2cm]
+
+El resultado determinístico es aquel obtenido empleando demandas y ofertas en cada nodo cuyos valores eran fijos. Se ha establecido como caso ideal en el cual su comportamiento es plenamente predecible. Frente a este escenario se han simulado 10 escenarios estocásticos cuyos costes se han obtenido a partir de ofertas y demandas variables, obtenidas empleando las distribuciones anteriormente expuestas. En dichas simulaciones se ha empleado aleatorización sesgada con un parámetro $\beta$=0.5 para una distribución geométrica, lo que supone un comportamiento intermedio entre uno explorativo puro y uno explotativo puro. Los valores medios del conjunto de los escenarios estocásticos no resultan de gran utilidad ya que por la ley de los grandes números convergerán al caso determinístico, por lo que es experimento realizado solo busca la obtención de una muestra de hipotéticos escenarios.\\[0.2cm]
+En general la mayoría de las instancias de Kelly1 a Kelly16 presentan menores costes que el caso determinístico en los casos observándose valores de gap negativos de hasta -15\%. De forma similar las instancias Kelly17 a Kelly 20 no presentan menores costes que el escenario determinístico. Puede estar causado, a parte de la distribución de los nodos en dichas instancias, al hecho de que los vehículos empleados en esos casos menor capacidad que los presentes en los otros casos , al menos, en cuanto a los niveles de demanda y oferta se refiere.  
 
    \item) \textbf{Conclusiones y trabajo futuro}\\[0.2cm]
 
@@ -281,5 +340,10 @@ Como trabajo futuro proponemos:
 
  \end{enumerate}
 
+\pagestyle{empty}
+\begin{landscape}
+
+\end{landscape}
+\pagestyle{plain}
 
 \end{document}
