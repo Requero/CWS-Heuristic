@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 2.9.7400 64-bit) (preloaded format=pdflatex 2020.11.1)  20 JAN 2021 22:24
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 2.9.7400 64-bit) (preloaded format=pdflatex 2020.11.1)  20 JAN 2021 22:49
 entering extended mode
 **./report_PEC.tex
 (report_PEC.tex
@@ -57,6 +57,13 @@ Package: subcaption 2020/10/07 v1.3j Sub-captions (AR)
 \c@subfigure=\count177
 \c@subtable=\count178
 )
+("C:\Users\mauro\AppData\Local\Programs\MiKTeX 2.9\tex/latex/pdflscape\pdflscap
+e.sty"
+Package: pdflscape 2019/12/05 v0.12 Display of landscape pages in PDF (HO)
+
+("C:\Users\mauro\AppData\Local\Programs\MiKTeX 2.9\tex/generic/iftex\iftex.sty"
+Package: iftex 2020/03/06 v1.0d TeX engine tests
+)
 ("C:\Users\mauro\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\lscape.st
 y"
 Package: lscape 2000/10/22 v3.01 Landscape Pages (DPC)
@@ -78,6 +85,8 @@ Package graphics Info: Driver file: pdftex.def on input line 105.
 x.def"
 File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
 )))
+Package pdflscape Info: Auto-detected driver: pdftex on input line 81.
+)
 ("C:\Users\mauro\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\rotating.
 sty"
 Package: rotating 2016/08/11 v2.16d rotated objects in LaTeX
@@ -130,10 +139,7 @@ Package: geometry 2020/01/02 v5.9 Page Geometry
 ("C:\Users\mauro\AppData\Local\Programs\MiKTeX 2.9\tex/generic/iftex\ifvtex.sty
 "
 Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
- ("C:\Users\mauro\AppData\Local\Programs\MiKTeX 2.9\tex/generic/iftex\iftex.sty
-"
-Package: iftex 2020/03/06 v1.0d TeX engine tests
-))
+)
 \Gm@cnth=\count186
 \Gm@cntv=\count187
 \c@Gm@tempcnt=\count188
@@ -283,20 +289,20 @@ File: l3backend-pdfmode.def 2020-03-12 L3 backend support: PDF mode
 ) (report_PEC.aux)
 \openout1 = `report_PEC.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 70.
-LaTeX Font Info:    ... okay on input line 70.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 70.
-LaTeX Font Info:    ... okay on input line 70.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 70.
-LaTeX Font Info:    ... okay on input line 70.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 70.
-LaTeX Font Info:    ... okay on input line 70.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 70.
-LaTeX Font Info:    ... okay on input line 70.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 70.
-LaTeX Font Info:    ... okay on input line 70.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 70.
-LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 71.
+LaTeX Font Info:    ... okay on input line 71.
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: float package is loaded.
 Package caption Info: longtable package is loaded.
@@ -364,13 +370,13 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 71.
+(Font)              <12> on input line 72.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 71.
+(Font)              <8> on input line 72.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 71.
+(Font)              <6> on input line 72.
 
-Overfull \hbox (3.77583pt too wide) in paragraph at lines 75--75
+Overfull \hbox (3.77583pt too wide) in paragraph at lines 76--76
 []\OT1/cmss/m/n/12 A simheuris-tic al-go-rithm for solv-ing the per-mu-ta-tion 
 flow shop prob-lem with stochas-
  []
@@ -378,12 +384,12 @@ flow shop prob-lem with stochas-
 [1
 
 {C:/Users/mauro/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
-Underfull \hbox (badness 10000) in paragraph at lines 97--99
+Underfull \hbox (badness 10000) in paragraph at lines 98--100
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 100--101
+Underfull \hbox (badness 10000) in paragraph at lines 101--102
 
  []
 
@@ -395,82 +401,82 @@ This may cause the page layout to be inconsistent, however.
 
 [2]
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <10.95> on input line 114.
+(Font)              <10.95> on input line 115.
 
-Underfull \hbox (badness 10000) in paragraph at lines 122--123
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 124--125
+Underfull \hbox (badness 10000) in paragraph at lines 123--124
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 126--127
+Underfull \hbox (badness 10000) in paragraph at lines 125--126
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 128--129
+Underfull \hbox (badness 10000) in paragraph at lines 127--128
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 130--131
+Underfull \hbox (badness 10000) in paragraph at lines 129--130
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 132--133
+Underfull \hbox (badness 10000) in paragraph at lines 131--132
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 134--136
+Underfull \hbox (badness 10000) in paragraph at lines 133--134
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 135--137
 
  []
 
 [3
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 138--139
+Underfull \hbox (badness 10000) in paragraph at lines 139--140
 
  []
 
 
-Overfull \hbox (4.54796pt too wide) in paragraph at lines 147--148
+Overfull \hbox (4.54796pt too wide) in paragraph at lines 148--149
 \OT1/cmr/m/n/10.95 Este artculo re-visa la lit-er-atura ex-is-tente rela-cion
 ada con la com-bi-nacion de meta-heursticos
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 147--148
+Underfull \hbox (badness 10000) in paragraph at lines 148--149
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 159--160
+Underfull \hbox (badness 10000) in paragraph at lines 160--161
 
  []
 
 [4]
-Underfull \hbox (badness 10000) in paragraph at lines 173--174
+Underfull \hbox (badness 10000) in paragraph at lines 174--175
 
  []
 
 [5]
 
 LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <50> not available
-(Font)              size <24.88> substituted on input line 181.
+(Font)              size <24.88> substituted on input line 182.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 192--193
+Underfull \hbox (badness 10000) in paragraph at lines 193--194
 
  []
 
 
-Overfull \hbox (0.92834pt too wide) in paragraph at lines 194--196
+Overfull \hbox (0.92834pt too wide) in paragraph at lines 195--197
 []\OT1/cmr/m/n/10.95 Para esta se-gunda re-vision del al-go-ritmo a~nadimos la
 s sigu-ientes re-stric-ciones basadas
  []
@@ -478,7 +484,7 @@ s sigu-ientes re-stric-ciones basadas
 [6
 
 ]
-Overfull \hbox (0.25919pt too wide) in paragraph at lines 232--233
+Overfull \hbox (0.25919pt too wide) in paragraph at lines 233--234
 []\OT1/cmr/m/n/10.95 Construir las aris-tas en-tre los no-dos, cal-cu-lando un 
 coste aso-ci-ado al movimiento
  []
@@ -486,40 +492,46 @@ coste aso-ci-ado al movimiento
 <Node.png, id=26, 481.04718pt x 193.47281pt>
 File: Node.png Graphic file (type png)
 <use Node.png>
-Package pdftex.def Info: Node.png  used on input line 242.
+Package pdftex.def Info: Node.png  used on input line 243.
 (pdftex.def)             Requested size: 426.80208pt x 170.71713pt.
 [7]
 <StochDistrib.png, id=33, 300.3722pt x 225.84375pt>
 File: StochDistrib.png Graphic file (type png)
 <use StochDistrib.png>
-Package pdftex.def Info: StochDistrib.png  used on input line 247.
+Package pdftex.def Info: StochDistrib.png  used on input line 248.
 (pdftex.def)             Requested size: 234.7431pt x 170.72636pt.
 <merge.png, id=34, 495.35063pt x 222.07968pt>
 File: merge.png Graphic file (type png)
 <use merge.png>
-Package pdftex.def Info: merge.png  used on input line 252.
+Package pdftex.def Info: merge.png  used on input line 253.
 (pdftex.def)             Requested size: 426.79443pt x 170.71722pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 256--257
+Underfull \hbox (badness 10000) in paragraph at lines 257--258
 
  []
 
 [8 <./Node.png> <./StochDistrib.png> <./merge.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 258--259
+<Result1.png, id=41, 821.31844pt x 335.75438pt>
+File: Result1.png Graphic file (type png)
+<use Result1.png>
+Package pdftex.def Info: Result1.png  used on input line 261.
+(pdftex.def)             Requested size: 426.78726pt x 170.71501pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 264--265
 
  []
 
-[9] (report_PEC.aux)
+[9 <./Result1.png>] (report_PEC.aux)
 
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 25.12pt have occurred.
 
  ) 
 Here is how much of TeX's memory you used:
- 4138 strings out of 480930
- 67255 string characters out of 2899761
- 308313 words of memory out of 3000000
- 19970 multiletter control sequences out of 15000+200000
+ 4159 strings out of 480930
+ 67741 string characters out of 2899761
+ 308709 words of memory out of 3000000
+ 19987 multiletter control sequences out of 15000+200000
  539697 words of font info for 48 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  39i,12n,45p,1151b,393s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -533,9 +545,9 @@ ppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/U
 sers/mauro/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cms
 s12.pfb><C:/Users/mauro/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/am
 sfonts/cm/cmti10.pfb>
-Output written on report_PEC.pdf (9 pages, 203783 bytes).
+Output written on report_PEC.pdf (9 pages, 322467 bytes).
 PDF statistics:
- 72 PDF objects out of 1000 (max. 8388607)
+ 74 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 16 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 21 words of extra memory for PDF output out of 10000 (max. 10000000)
 
