@@ -19,8 +19,8 @@ class Edge:
         self.end = end # end node of the edge (arc)
         self.cost = 0.0  # edge cost
         self.savings = 0.0 # edge savings (Clarke & Wright)
-        self.demandRequired = 0.0 # Demand of the end node
-        self.supplyGiven = 0.0 # Supply of the end node
+        self.demandRequired = end.demand # Demand of the end node
+        self.supplyGiven = end.supply # Supply of the end node
         self.invEdge = None # inverse edge (arc)
 
 
@@ -31,7 +31,7 @@ class Route:
         self.edges = []  # sorted edges in this route
         self.capacity = capacity  # vehicle capacity
         self.to_serve = self.capacity#/2  # starting number of items to cover demand
-        self.to_pick = self.capacity-self.to_serve  # starting capacity to cover pick-ups
+        self.to_pick = self.capacity - self.to_serve  # starting capacity to cover pick-ups
     
     def reverse(self): # e.g. 0 -> 2 -> 6 -> 0 becomes 0 -> 6 -> 2 -> 0
         size = len(self.edges)
@@ -45,13 +45,13 @@ class Route:
         self.edges.remove(edge)
         self.cost -= edge.cost
         self.to_serve += edge.demandRequired  # If not served, capacity to serve increases
-        self.to_pick += edge.supplyGiven  # If not picked up, capacity to pick-up increases
+        self.to_pick = self.to_pick - edge.demandRequired + edge.supplyGiven  # If not picked up, capacity to pick-up increases
 
     def addEdge(self, edge):
         self.edges.append(edge)
         self.cost += edge.cost
-        self.to_serve -= edge.demandRequired  # If not served, capacity to serve increases
-        self.to_pick -= edge.supplyGiven  # If not picked up, capacity to pick-up increases
+        self.to_serve -= edge.demandRequired  # If served, capacity to serve decreases
+        self.to_pick = self.to_pick + edge.demandRequired - edge.supplyGiven  # If picked up, capacity to pick-up decreases
             
 class Solution:
     

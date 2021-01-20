@@ -77,12 +77,6 @@ class HeuristicSequential:
             dnEdge.cost = math.sqrt((node.x - self.depot.x)**2 + (node.y - self.depot.y)**2)
             ndEdge.cost = dnEdge.cost # assume symmetric costs
 
-            #Data need to take into account number of packages needed at destination
-            dnEdge.demandRequired = node.demand
-            dnEdge.supplyGiven = node.supply
-            ndEdge.demandRequired = 0.0
-            ndEdge.supplyGiven = 0.0
-
             # save in node a reference to the (self.depot, node) edge (arc)
             node.dnEdge = dnEdge
             node.ndEdge = ndEdge
@@ -103,8 +97,8 @@ class HeuristicSequential:
                 #Data need to take into account number of packages needed at destination
                 ijEdge.demandRequired = iNode.demand + jNode.demand
                 ijEdge.supplyGiven = iNode.supply + jNode.supply
-                jiEdge.demandRequired = ijEdge.demandRequired  # Symmetric demand
-                jiEdge.supplyGiven = ijEdge.supplyGiven  # Symmetric pickup
+                jiEdge.demandRequired = 0.0  # back to depot
+                jiEdge.supplyGiven = 0.0  # back to depot
 
                 # compute savings as proposed by Clark & Wright
                 ijEdge.savings = iNode.ndEdge.cost + jNode.dnEdge.cost -ijEdge.cost
@@ -139,7 +133,7 @@ class HeuristicSequential:
             return False
         # condition 3: demand after merging can be covered by a single vehicle
         # This means that the vehicle still has the right number of packages to pickup and deliver to other nodes before resetting at depot.
-        if 0 < iRoute.to_serve - jRoute.to_serve or 0 < iRoute.to_pick - jRoute.to_pick:
+        if iRoute.to_serve - jNode.demand < 0 or iRoute.to_pick - jRoute.to_pick < 0:
             return False
         # else, merging is feasible
         return True
@@ -188,6 +182,7 @@ class HeuristicSequential:
                 if jRoute.edges[0].origin == self.depot : jRoute.reverse()
                 # add ijEdge to iRoute
                 iRoute.addEdge(ijEdge)
+                jNode.inRoute = iRoute
                 # add jRoute to new iRoute
                 for edge in jRoute.edges:
                     iRoute.addEdge(edge)
