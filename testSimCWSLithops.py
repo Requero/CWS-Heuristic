@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from io import StringIO
 import sys
-import cwsheuristiclithops as cws
+import cwsheuristic_vrppd as cws
 import copy
 import vrp_objects as vrp
 import time
@@ -17,13 +17,13 @@ from ibm_botocore.client import Config
 import ibm_boto3
 
 
-def testCWS(instanceData):
+def VRPPDDeterministic(instanceData):
     #instanceName, veCap, nodeMatrix
-    instanceCws = cws.HeuristicSequential(instanceData[0], instanceData[1], instanceData[2])
+    instanceCws = cws.HeuristicSequential(instanceData[0], instanceData[1], instanceData[2][0:5])
     instanceCws.runCWSSol()
     return np.array([instanceData[0],instanceData[1], instanceCws.getCost()])
 
-def testSRGCWS(instanceData, nIterations, beta, isRCU, splittingType):
+def VRPPDStochastic(instanceData, nIterations, beta, isRCU, splittingType):
     #instanceData, nIterations, betas,  isRCUs, splittingTypes
     localInstanceCws = cws.HeuristicSequential(instanceData[0], instanceData[1], instanceData[2])
     bestSol = vrp.Solution()
@@ -91,8 +91,6 @@ def generateAdditionalData(instanceData):
     supply_mean = np.ceil(demand_mean * f1)
     demand_desv = np.ceil(demand_mean*np.absolute(1-f1))
     supply_desv = np.ceil(supply_mean*np.absolute(1-f2))
-    #print(demand_mean**2/demand_desv**2)
-    #print(supply_mean**2/supply_desv**2)
     df['demand_desv'] = np.insert(demand_desv, 0, 0)
     df['supply_mean'] = np.insert(supply_mean, 0, 0)
     df['supply_desv'] = np.insert(supply_desv, 0, 0)
@@ -107,6 +105,13 @@ def beta(mean, std):
     beta = abs(alfa*((1/mu)-1))
     return 1000*np.random.beta(alfa, beta)
 
+def generateStochasticValue(mean, std):
+    factor = mean**2/desv**2
+    if factor < 15:
+        return beta(mean, desv) 
+    else:
+        return numpy.random.lognormal(mean, desv)
+
 def costsStocksSimulation(instanceFile, cost_demand, cost_supply, isStochastic, nIterations):
     df = pandas.read_csv('/instancesmod/'+str(instanceFile)+'.csv', encoding='utf-8')
     dfCosts = pd.DataFrame(columns = ['costs'])
@@ -119,16 +124,8 @@ def costsStocksSimulation(instanceFile, cost_demand, cost_supply, isStochastic, 
                 demand_desv = df['demand_desv'][i]
                 supply_mean = df['supply_mean'][i]
                 supply_desv = df['supply_desv'][i]
-                factor1 = demand_mean**2/demand_desv**2
-                factor2 = supply_mean**2/supply_desv**2
-                if factor1 < 15:
-                    demand = beta(demand_mean, demand_desv) 
-                else:
-                    demand = numpy.random.lognormal(demand_mean, demand_desv)
-                if factor2 < 15:
-                    supply = beta(supply_mean, supply_desv) 
-                else:
-                    supply = numpy.random.lognormal(supply_mean, supply_desv)
+                demand = generateStochasticValue(demand_mean, demand_value)
+                supply = generateStochasticValue(supply_mean, supply_value)
                 dfCostsTemp['cost_'+str(j)][i] = demand * cost_demand + supply * cost_supply
         dfCosts = dfCostsTemp.mean(axis=1)    
     else:
@@ -140,6 +137,23 @@ def costsStocksSimulation(instanceFile, cost_demand, cost_supply, isStochastic, 
     return dfCosts
 
 def readNewInstancesLocal(fileName):
+    #bucket_name, vehCaps, file
+    df = pd.read_csv('instancesmod/'+fileName)
+    instanceName = fileName.split('_')[0]
+    capacity = fileName.split('_')[1].split('.')[0]
+    #fileobject = storage.get_object(params[0], params[2]['Key'], stream=True)
+    #instanceName = str(params[2]['Key']).replace('instances/', '').replace('_input_nodes.txt', '')
+    #dfPoints=pd.read_csv(fileobject, sep='\t', names=['x', 'y', 'demand'])
+    i = 0
+    nodeMatrix = []
+    rows = df.values.tolist()
+    for row in rows:
+        #nodeMatrix.append([i, float(data['x']), float(data['y']), float(data['demand'])])
+        nodeMatrix.append([i, row[0], row[1], row[2], row[3], row[4], row[5]])
+        i += 1
+    return [instanceName, int(capacity), nodeMatrix]
+
+def generateDeterministicInstances(fileName):
     #bucket_name, vehCaps, file
     df = pd.read_csv('instancesmod/'+fileName)
     instanceName = fileName.split('_')[0]
@@ -196,15 +210,17 @@ def SimCWS(buckets):
     for file in filesmod:
         instanceData.append(readNewInstancesLocal(file))
 
+    
+    #Deterministic case
     isLocal = True
     if isLocal:
         pool =mp.Pool(processes=12)
-        costsCWS = pool.map(testCWS, instanceData)
+        costsCWS = pool.map(VRPPDDeterministic, instanceData)
         dfCostsCWS = pd.DataFrame(costsCWS,columns = ["Instance", "Capacity", "Original"])
     else:
         #CWS problem
         fexec1 = lth.FunctionExecutor(runtime=runtime)
-        fexec1.map(testCWS, instanceData)
+        fexec1.map(VRPPDDeterministic, instanceData)
         costsCWS = fexec1.get_result()
         fexec1.plot(dst='lithops_plots/CWS') 
         fexec1.clean()

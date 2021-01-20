@@ -1,6 +1,6 @@
 class Node:
     
-    def __init__(self, ID, x, y, demand_mean, supply_mean):
+    def __init__(self, ID, x, y, demand, supply):
         self.ID = ID  # node identifier (depot ID = 0)
         self.x = x  # Euclidean x-coordinate
         self.y = y  # Euclidean y-coordinate

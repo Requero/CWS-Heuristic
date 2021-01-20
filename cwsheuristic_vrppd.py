@@ -9,18 +9,7 @@ import networkx as nx
 import random
 
 """ Read instance data fromm txt file """
-#Distribución beta para el caso en el que 0.65 < mu**2/sigma**2 < 15
-def beta(mean, std):
-    n = 1000
-    mu = mean/n
-    sigma = std/n
-    alfa = abs(((1-mu)/(sigma**2)-(1/mu))*mu**2)
-    beta = abs(alfa*((1/mu)-1))
-    return 1000*np.random.beta(alfa, beta)
 
-def generateRandomValue(mean, std):
-    factor = mean**2/std**2
-    
 class HeuristicSequential:
     # Fields
     # instanceName
@@ -36,8 +25,8 @@ class HeuristicSequential:
         self.nodes = []
         for nodeData in nodeMatrix:
             print(nodeData)
-            # array  data with node data: ID, x, y, demand_mean, demand_desv, supply_mean, supply_desv
-            self.nodes.append(Node(nodeData[0], nodeData[1], nodeData[2], nodeData[3], nodeData[4],nodeData[5], nodeData[6]))
+            # array  data with node data: ID, x, y, demand, supply
+            self.nodes.append(Node(nodeData[0], nodeData[1], nodeData[2], nodeData[3], nodeData[4]))
 
     def runCWSSolGeneral(self, beta = 0.0):
         self.sol = Solution()
@@ -89,8 +78,8 @@ class HeuristicSequential:
             ndEdge.cost = dnEdge.cost # assume symmetric costs
 
             #Data need to take into account number of packages needed at destination
-            dnEdge.demandRequired = node.demand_mean
-            dnEdge.supplyGiven = node.supply_mean
+            dnEdge.demandRequired = node.demand
+            dnEdge.supplyGiven = node.supply
             ndEdge.demandRequired = 0.0
             ndEdge.supplyGiven = 0.0
 
@@ -112,8 +101,8 @@ class HeuristicSequential:
                 jiEdge.cost = ijEdge.cost  # assume symmetric costs
 
                 #Data need to take into account number of packages needed at destination
-                ijEdge.demandRequired = iNode.demand_mean + jNode.demand_mean
-                ijEdge.supplyGiven = iNode.supply_mean + jNode.supply_mean
+                ijEdge.demandRequired = iNode.demand + jNode.demand
+                ijEdge.supplyGiven = iNode.supply + jNode.supply
                 jiEdge.demandRequired = ijEdge.demandRequired  # Symmetric demand
                 jiEdge.supplyGiven = ijEdge.supplyGiven  # Symmetric pickup
 
@@ -202,7 +191,7 @@ class HeuristicSequential:
                 # add jRoute to new iRoute
                 for edge in jRoute.edges:
                     iRoute.addEdge(edge)
-                    iRoute.to_serve += edge.end.demand_mean
+                    iRoute.to_serve += edge.end.demand
                     edge.end.inRoute = iRoute
                 # delete jRoute from emerging solution
                 self.sol.cost -= ijEdge.savings
