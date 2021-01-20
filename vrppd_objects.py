@@ -30,8 +30,8 @@ class Route:
         self.cost = 0.0  # cost of this route
         self.edges = []  # sorted edges in this route
         self.capacity = capacity  # vehicle capacity
-        self.to_serve = self.capacity/2  # starting number of items to cover demand
-        self.pick_space = self.capacity-self.to_serve  # starting capacity to cover pick-ups
+        self.to_serve = self.capacity#/2  # starting number of items to cover demand
+        self.to_pick = self.capacity-self.to_serve  # starting capacity to cover pick-ups
     
     def reverse(self): # e.g. 0 -> 2 -> 6 -> 0 becomes 0 -> 6 -> 2 -> 0
         size = len(self.edges)
@@ -45,13 +45,13 @@ class Route:
         self.edges.remove(edge)
         self.cost -= edge.cost
         self.to_serve += edge.demandRequired  # If not served, capacity to serve increases
-        self.pick_space += edge.supplyGiven  # If not picked up, capacity to pick-up increases
+        self.to_pick += edge.supplyGiven  # If not picked up, capacity to pick-up increases
 
     def addEdge(self, edge):
         self.edges.append(edge)
         self.cost += edge.cost
         self.to_serve -= edge.demandRequired  # If not served, capacity to serve increases
-        self.pick_space -= edge.supplyGiven  # If not picked up, capacity to pick-up increases
+        self.to_pick -= edge.supplyGiven  # If not picked up, capacity to pick-up increases
             
 class Solution:
     

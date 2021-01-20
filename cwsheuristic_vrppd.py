@@ -1,7 +1,7 @@
 """ Clarke & Wright savings heuristic sfor the VRP """
 
 import copy
-from vrp_objects import Node, Edge, Route, Solution
+from vrppd_objects import Node, Edge, Route, Solution
 import math
 import operator
 import networkx as nx
@@ -24,10 +24,11 @@ class HeuristicSequential:
         self.vehCap = vehCap
         self.nodes = []
         for nodeData in nodeMatrix:
-            # array  data with node data: ID, x, y, demand, to_pickup
+            print(nodeData)
+            # array  data with node data: ID, x, y, demand, supply
             self.nodes.append(Node(nodeData[0], nodeData[1], nodeData[2], nodeData[3], nodeData[4]))
 
-    def runCWSSolGeneral(self, beta=0.0):
+    def runCWSSolGeneral(self, beta = 0.0):
         self.sol = Solution()
         if beta == 0.0:
             self.constructEdges(self.nodes)
@@ -184,13 +185,13 @@ class HeuristicSequential:
                 # if there are multiple edges in jRute, the j will be interior
                 if len(jRoute.edges) > 1: jNode.isInterior = True
                 # if  new jRoute  starts at 0 it must be reverse()
-                if jRoute.edges[0].origin == self.depot: jRoute.reverse()
+                if jRoute.edges[0].origin == self.depot : jRoute.reverse()
                 # add ijEdge to iRoute
                 iRoute.addEdge(ijEdge)
                 # add jRoute to new iRoute
                 for edge in jRoute.edges:
                     iRoute.addEdge(edge)
-                    iRoute.demand += edge.end.demand
+                    iRoute.to_serve += edge.end.demand
                     edge.end.inRoute = iRoute
                 # delete jRoute from emerging solution
                 self.sol.cost -= ijEdge.savings

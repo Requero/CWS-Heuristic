@@ -2,46 +2,28 @@ import os
 from pathlib import Path
 from io import StringIO
 import sys
-
-import pandas
-
-import cwsheuristiclithops as cws
+import cwsheuristic_vrppd as cws
 import copy
-import vrp_objects as vrp
+import vrppd_objects as vrp
 import time
 import pandas as pd 
 import lithops as lth
 import numpy as np
 from lithops import Storage
-import numpy as np
+import multiprocessing as mp
 import itertools as it
 import shutil
 from ibm_botocore.client import Config
 import ibm_boto3
 
 
-def testCWS(instanceData):
+def VRPPDDeterministic(instanceData):
     #instanceName, veCap, nodeMatrix
-    instanceCws = cws.HeuristicSequential(instanceData[0], instanceData[1], instanceData[2])
+    instanceCws = cws.HeuristicSequential(instanceData[0], instanceData[1], instanceData[2][0:5])
     instanceCws.runCWSSol()
     return np.array([instanceData[0],instanceData[1], instanceCws.getCost()])
 
-def iterationSRGCWS(iteration, instanceData, beta, isRCU, splittingType):
-    localInstanceCws = cws.HeuristicSequential(instanceData[0], instanceData[1], instanceData[2])
-    localInstanceCws.runCWSSolGeneral(beta, isRCU, splittingType)
-    return localInstanceCws.getSolution().cost
-
-def testSRGCWSLithops(instanceData, nIterations, beta, isRCU, splittingType):
-    rangeIterations = list(range(0,nIterations))
-    paramlist = list(it.product(rangeIterations, [instanceData], [beta],[isRCU], [splittingType]))
-    fexec = lth.FunctionExecutor()
-    fexec.map(iterationSRGCWS, paramlist)
-    minCosts = fexec.get_result()
-    fexec.clean()
-    minCost = min(minCosts)
-    return [minCost]#[instanceData[0], instanceData[1], beta, isRCU, 'Random' if splittingType == 'Null' else splittingType, minCost] #, deltaTime
-
-def testSRGCWS(instanceData, nIterations, beta, isRCU, splittingType):
+def VRPPDStochastic(instanceData, nIterations, beta, isRCU, splittingType):
     #instanceData, nIterations, betas,  isRCUs, splittingTypes
     localInstanceCws = cws.HeuristicSequential(instanceData[0], instanceData[1], instanceData[2])
     bestSol = vrp.Solution()
@@ -109,15 +91,13 @@ def generateAdditionalData(instanceData):
     supply_mean = np.ceil(demand_mean * f1)
     demand_desv = np.ceil(demand_mean*np.absolute(1-f1))
     supply_desv = np.ceil(supply_mean*np.absolute(1-f2))
-    #print(demand_mean**2/demand_desv**2)
-    #print(supply_mean**2/supply_desv**2)
     df['demand_desv'] = np.insert(demand_desv, 0, 0)
     df['supply_mean'] = np.insert(supply_mean, 0, 0)
     df['supply_desv'] = np.insert(supply_desv, 0, 0)
     df.to_csv(r'./instancesmod/'+instanceName+'_'+str(int(capacity))+'.csv', index=False)
 
-#Distribución beta para el caso en el que 0.65 < mu**2/sigma**2 < 15
-def beta(mean, std):
+
+def betaDistribution(mean, std):
     n = 1000
     mu = mean/n
     sigma = std/n
@@ -125,20 +105,14 @@ def beta(mean, std):
     beta = abs(alfa*((1/mu)-1))
     return 1000*np.random.beta(alfa, beta)
 
-def setDemandAndSupply(demand_mean, demand_desv, supply_mean, supply_desv):
-    factor1 = demand_mean ** 2 / demand_desv ** 2
-    factor2 = supply_mean ** 2 / supply_desv ** 2
-    if factor1 < 15:
-        demand = beta(demand_mean, demand_desv)
+def generateStochasticValue(mean, std):
+    factor = mean**2/desv**2
+    if factor < 15:
+        return betaDistribution(mean, desv) 
     else:
-        demand = np.random.lognormal(demand_mean, demand_desv)
-    if factor2 < 15:
-        supply = beta(supply_mean, supply_desv)
-    else:
-        supply = np.random.lognormal(supply_mean, supply_desv)
-    return demand, supply
+        return numpy.random.lognormal(mean, desv)
 
-def costsStocksSimulation(instanceFile, cost_demand = 0.05, cost_supply = 0.05, isStochastic = False, nIterations = 10000):
+def costsStocksSimulation(instanceFile, cost_demand, cost_supply, isStochastic, nIterations):
     df = pandas.read_csv('/instancesmod/'+str(instanceFile)+'.csv', encoding='utf-8')
     dfCosts = pd.DataFrame(columns = ['costs'])
     dfCostsTemp = pd.DataFrame()
@@ -150,9 +124,8 @@ def costsStocksSimulation(instanceFile, cost_demand = 0.05, cost_supply = 0.05, 
                 demand_desv = df['demand_desv'][i]
                 supply_mean = df['supply_mean'][i]
                 supply_desv = df['supply_desv'][i]
-
-                demand, supply = setDemandAndSupply(demand_mean, demand_desv, supply_mean, supply_desv)
-
+                demand = generateStochasticValue(demand_mean, demand_value)
+                supply = generateStochasticValue(supply_mean, supply_value)
                 dfCostsTemp['cost_'+str(j)][i] = demand * cost_demand + supply * cost_supply
         dfCosts = dfCostsTemp.mean(axis=1)    
     else:
@@ -163,91 +136,119 @@ def costsStocksSimulation(instanceFile, cost_demand = 0.05, cost_supply = 0.05, 
                 dfCosts['costs'][i] = df['demand_mean'][i]*cost_demand + df['supply_mean'][i]*cost_supply
     return dfCosts
 
-def readCsvInstances(filename):
-    dirname, f = os.path.split(os.path.abspath(__file__))
-    dirname = dirname + "\\instancesmod"
-    instanceName = str(filename).replace(dirname + "\\", '').replace('.csv', '')
-    vehicle_capacity = int(instanceName.split("_")[1])
-    # replace('.txt')
-    with open(filename) as instance:
-        costs = []
-        nodeMatrix = []
-        for line in instance:
-            # array  data with node data: x, y, demand
-            data = [float(x) for x in line.split(",")]
+def readNewInstancesLocal(fileName):
+    #bucket_name, vehCaps, file
+    df = pd.read_csv('instancesmod/'+fileName)
+    instanceName = fileName.split('_')[0]
+    capacity = fileName.split('_')[1].split('.')[0]
+    #fileobject = storage.get_object(params[0], params[2]['Key'], stream=True)
+    #instanceName = str(params[2]['Key']).replace('instances/', '').replace('_input_nodes.txt', '')
+    #dfPoints=pd.read_csv(fileobject, sep='\t', names=['x', 'y', 'demand'])
+    i = 0
+    nodeMatrix = []
+    rows = df.values.tolist()
+    for row in rows:
+        #nodeMatrix.append([i, float(data['x']), float(data['y']), float(data['demand'])])
+        nodeMatrix.append([i, row[0], row[1], row[2], row[3], row[4], row[5]])
+        i += 1
+    return [instanceName, int(capacity), nodeMatrix]
 
-            nodeMatrix.append([data[0], data[1], data[2], data[3], data[5]]) #Deterministic
-    return (instanceName, vehicle_capacity, nodeMatrix)
+def generateDeterministicInstances(fileName):
+    #bucket_name, vehCaps, file
+    df = pd.read_csv('instancesmod/'+fileName)
+    instanceName = fileName.split('_')[0]
+    capacity = fileName.split('_')[1].split('.')[0]
+    #fileobject = storage.get_object(params[0], params[2]['Key'], stream=True)
+    #instanceName = str(params[2]['Key']).replace('instances/', '').replace('_input_nodes.txt', '')
+    #dfPoints=pd.read_csv(fileobject, sep='\t', names=['x', 'y', 'demand'])
+    i = 0
+    nodeMatrix = []
+    rows = df.values.tolist()
+    for row in rows:
+        #nodeMatrix.append([i, float(data['x']), float(data['y']), float(data['demand'])])
+        nodeMatrix.append([i, row[0], row[1], row[2], row[3], row[4], row[5]])
+        i += 1
+    return [instanceName, int(capacity), nodeMatrix]
 
 def SimCWS(buckets):
 
-    files = []
-    spec_storage = Storage()
-    for i in buckets:
-        try:
-            files = spec_storage.list_objects(bucket  =i, prefix='Instances3/')
-            bucket = i 
-            print(i + ' availiable') 
-        except:
-            print(i + ' not availiable')
-    del files[0]
-    
-    runtime  = 'lithopscloud/ibmcf-python-v38:2021.01'
-    
-    #Read instances
-    fexec = lth.FunctionExecutor(runtime=runtime)
-    dirname, f = os.path.split(os.path.abspath(__file__))
-    dirname = dirname + "\\instancesmod"
-    folder = Path(dirname).rglob('*.csv')
-    files = [x for x in folder]
+    if True == False:
+        files = []
+        spec_storage = Storage()
+        #'bucketlithops',
+        for i in buckets:
+            try:
+                files = spec_storage.list_objects(bucket  =i, prefix='instances/')
+                bucket = i 
+                print(i + ' available') 
+            except:
+                print(i + ' not available')
+        #files = spec_storage.list_objects(bucket  =bucket, prefix='instances/')
+        #print(files)
+        del files[0]
 
-    fexec.map(readCsvInstances, files)
-    instanceData = fexec.get_result()
-    # paramlist =[]
-    # files = np.reshape(files, (int(len(files)/2),2))
-    # for file in files:
-    #     paramlist.append([bucket, file[0], file[1]])
-    # fexec.map(readInstances, paramlist)
-    # instanceData = fexec.get_result()
-    # fexec.clean()
-    # shutil.rmtree('./output')
-    # os.mkdir('./output')
-    #
-    # shutil.rmtree('./instancesmod')
-    # os.mkdir('./instancesmod')
-    # for i in instanceData:
-    #     generateAdditionalData(i)
-    #CWS problem
-    fexec1 = lth.FunctionExecutor(runtime=runtime)
-    fexec1.map(testCWS, instanceData)
-    costsCWS = fexec1.get_result()
-    fexec1.plot(dst='lithops_plots/CWS') 
-    fexec1.clean()
-    dfCostsCWS = pd.DataFrame(costsCWS,columns = ['Instance', 'Capacity', 'Original'])
+        runtime  = 'lithopscloud/ibmcf-python-v38:2021.01' 
+        #Read instances
+        fexec = lth.FunctionExecutor(runtime=runtime)
+        #paramlist = list(it.product(['bucketlithops'],[vehCaps], files))
+        paramlist = [[bucket, vehCaps, file] for file in files]
+        fexec.map(readInstances, paramlist)
+        instanceData = fexec.get_result()
+        #fexec.plot(dst='lithops_plots/Read') 
+        fexec.clean()
+        #print(futs[0].status())
+        shutil.rmtree('./instancesmod')
+        os.mkdir('./instancesmod')
+        
+    shutil.rmtree('./output')
+    os.mkdir('./output')
 
+    # Read csvs
+    filesmod = os.listdir('instancesmod/')
+    print(filesmod)
+    instanceData = []
+    for file in filesmod:
+        instanceData.append(readNewInstancesLocal(file))
+
+    
+    #Deterministic case
+    isLocal = True
+    if isLocal:
+        pool =mp.Pool(processes=12)
+        costsCWS = pool.map(VRPPDDeterministic, instanceData)
+        dfCostsCWS = pd.DataFrame(costsCWS,columns = ["Instance", "Capacity", "Original"])
+    else:
+        #CWS problem
+        fexec1 = lth.FunctionExecutor(runtime=runtime)
+        fexec1.map(VRPPDDeterministic, instanceData)
+        costsCWS = fexec1.get_result()
+        fexec1.plot(dst='lithops_plots/CWS') 
+        fexec1.clean()
+
+    print(dfCostsCWS)
     #SRGCWS problem
     #Data
-    # nIterations = [100]
+    nIterations = [100]
     #isRCUs = [False, True]
-    # rcPolicies = ['NoRefill', 'Refill1/4', 'Refill1/2', 'Refill3/4', 'RefillFull', 'RefillOpt']
-    # paramlist2 = list(it.product(instanceData, nIterations, betas,  isRCUs, splittingTypes))
+    rcPolicies = ['NoRefill', 'Refill1/4', 'Refill1/2', 'Refill3/4', 'RefillFull', 'RefillOpt']
+    paramlist2 = list(it.product(instanceData, nIterations, betas,  isRCUs, splittingTypes))
 
     #Execution
-    # fexec2 = lth.FunctionExecutor(runtime=runtime)
-    # fexec2.map(testSRGCWS, paramlist2)
-    # costSRGCWS = fexec2.get_result()
-    # fexec2.plot(dst='lithops_plots/SRGCWS')
-    # fexec2.clean()
+    fexec2 = lth.FunctionExecutor(runtime=runtime)
+    fexec2.map(testSRGCWS, paramlist2)
+    costSRGCWS = fexec2.get_result()
+    fexec2.plot(dst='lithops_plots/SRGCWS') 
+    fexec2.clean()
 
-    # dfCostsSRGCWS = pd.DataFrame(costSRGCWS, columns = ['Instance', 'Capacity', 'Beta', 'RCU','SplittingType', 'Cost'])
+    dfCostsSRGCWS = pd.DataFrame(costSRGCWS, columns = ['Instance', 'Capacity', 'Beta', 'RCU','SplittingType', 'Cost'])
     
     #Get one dataframe for each beta
-    # dfsCostsSRGCWS  = [dfCostsSRGCWS[dfCostsSRGCWS['Beta']==0.3], dfCostsSRGCWS[dfCostsSRGCWS['Beta']==0.5], dfCostsSRGCWS[dfCostsSRGCWS['Beta']==0.8]]
+    dfsCostsSRGCWS  = [dfCostsSRGCWS[dfCostsSRGCWS['Beta']==0.3], dfCostsSRGCWS[dfCostsSRGCWS['Beta']==0.5], dfCostsSRGCWS[dfCostsSRGCWS['Beta']==0.8]]
 
-    # dfsCostsSRGCWSBeta = []
+    dfsCostsSRGCWSBeta = []
     #Reshape dataframes
-    # for df in dfsCostsSRGCWS:
-    #     dfsCostsSRGCWSBeta.append(generateColumns(df,dfCostsCWS))
+    for df in dfsCostsSRGCWS:
+        dfsCostsSRGCWSBeta.append(generateColumns(df,dfCostsCWS))
 
     #Save results
     #file1 = open('./output/beta03.text', 'a')
@@ -261,7 +262,7 @@ def SimCWS(buckets):
     #file3 = open('./output/beta08.text', 'a')
     #file3.write(dfBetas[2].to_latex())
     #file3.close()
-    return [dfCostsCWS]#, dfsCostsSRGCWSBeta[0], dfsCostsSRGCWSBeta[1], dfsCostsSRGCWSBeta[2]]
+    return [dfCostsCWS, dfsCostsSRGCWSBeta[0], dfsCostsSRGCWSBeta[1], dfsCostsSRGCWSBeta[2]]
 
 def main():
     buckets = ['bucketlithops', 'lithopsbucket3']
