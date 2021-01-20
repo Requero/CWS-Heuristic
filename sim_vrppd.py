@@ -137,9 +137,6 @@ def generateAdditionalData(instanceData):
     df['supply_desv'] = np.insert(supply_desv, 0, 0)
     df.to_csv(r'./instancesmod/'+instanceName+'_'+str(int(capacity))+'.csv', index=False)
 
-
-
-
 def costsStocksSimulation(instanceFile, cost_demand, cost_supply, isStochastic, nIterations):
     df = pd.read_csv('/instancesmod/'+str(instanceFile)+'.csv', encoding='utf-8')
     dfCosts = pd.DataFrame(columns = ['costs'])
@@ -272,6 +269,7 @@ def SimCWS(buckets):
     print(temp1)
     temp2 = pd.DataFrame(getNodeMatrixaWithStochasticDemandAndSuppy(instanceDataStoch[0][2]))
     print(temp2)
+    
     #Stochastic case
     betas = [0.0, 0.3, 0.5, 0.8]
     nIterations = [10]
