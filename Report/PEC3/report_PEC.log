@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 2.9.7400 64-bit) (preloaded format=pdflatex 2020.11.1)  20 JAN 2021 19:07
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 2.9.7400 64-bit) (preloaded format=pdflatex 2020.11.1)  20 JAN 2021 19:31
 entering extended mode
 **./report_PEC.tex
 (report_PEC.tex
@@ -489,41 +489,58 @@ coste aso-ci-ado al movimiento
 [6
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 217--218
+<Node.png, id=27, 481.04718pt x 193.47281pt>
+File: Node.png Graphic file (type png)
+<use Node.png>
+Package pdftex.def Info: Node.png  used on input line 223.
+(pdftex.def)             Requested size: 426.80208pt x 170.71713pt.
+<StochDistrib.png, id=29, 300.3722pt x 225.84375pt>
+File: StochDistrib.png Graphic file (type png)
+<use StochDistrib.png>
+Package pdftex.def Info: StochDistrib.png  used on input line 228.
+(pdftex.def)             Requested size: 234.7431pt x 170.72636pt.
+<merge.png, id=30, 495.35063pt x 222.07968pt>
+File: merge.png Graphic file (type png)
+<use merge.png>
+Package pdftex.def Info: merge.png  used on input line 233.
+(pdftex.def)             Requested size: 426.79443pt x 170.71722pt.
+ [7 <./Node.png> <./StochDistrib.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 237--238
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 219--220
+Underfull \hbox (badness 10000) in paragraph at lines 239--240
 
  []
 
-[7] (report_PEC.aux)
+[8 <./merge.png>] (report_PEC.aux)
 
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 25.12pt have occurred.
 
  ) 
 Here is how much of TeX's memory you used:
- 4115 strings out of 480930
- 66932 string characters out of 2899761
+ 4138 strings out of 480930
+ 67255 string characters out of 2899761
  308313 words of memory out of 3000000
- 19951 multiletter control sequences out of 15000+200000
+ 19970 multiletter control sequences out of 15000+200000
  539697 words of font info for 48 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 39i,12n,45p,1151b,338s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 39i,12n,45p,1151b,393s stack positions out of 5000i,500n,10000p,200000b,50000s
  <C:\Users\mauro\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi600\
 tcrm1095.pk><C:/Users/mauro/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/publi
 c/amsfonts/cm/cmbx10.pfb><C:/Users/mauro/AppData/Local/Programs/MiKTeX 2.9/font
-s/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/mauro/AppData/Local/Programs/MiK
-TeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/mauro/AppData/Local/
-Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Users/mauro/Ap
-pData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmss12.pfb><C:/U
-sers/mauro/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmt
-i10.pfb>
-Output written on report_PEC.pdf (7 pages, 111005 bytes).
+s/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/mauro/AppData/Local/Programs/Mi
+KTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/mauro/AppData/Local
+/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/mauro/A
+ppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/U
+sers/mauro/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cms
+s12.pfb><C:/Users/mauro/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/am
+sfonts/cm/cmti10.pfb>
+Output written on report_PEC.pdf (8 pages, 200492 bytes).
 PDF statistics:
- 55 PDF objects out of 1000 (max. 8388607)
+ 69 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 16 words of extra memory for PDF output out of 10000 (max. 10000000)
 

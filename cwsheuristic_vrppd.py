@@ -130,7 +130,8 @@ class HeuristicSequential:
         if iNode.isInterior or jNode.isInterior:
             return False
         # condition 3: demand after merging can be covered by a single vehicle
-        # This means that the vehicle still has the right number of packages to pickup and deliver to other nodes before resetting at depot.
+        # This means that the vehicle still has the right number of
+        # packages to pickup and deliver to other nodes before resetting at depot.
         if iRoute.to_serve - jNode.demand < 0 or iRoute.to_pick - jRoute.to_pick < 0:
             return False
         # else, merging is feasible
