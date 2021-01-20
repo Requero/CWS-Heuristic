@@ -191,16 +191,17 @@ El problema del rutaje de vehiculos (VRP de sus siglas en inglés) se centra en 
    \end{itemize} 
 El VRP tiene un gran interes tanto por los beneficios económicos que puede reportar, asi como por los beneficios ecológicos que se pueden deducir del mismo.\\
 
-Para esta segunda revision del algoritmo añadimos las siguientes restricciones basadas en la oferta y la demanda de cada nodo:
+Para esta segunda revisión del algoritmo añadimos las siguientes restricciones basadas en la oferta y la demanda de cada nodo:
    \begin{itemize}
-	\item Asignación determinista de oferta y demanda, en contraposicion a la variante estocastica que asigna valores para oferta y demanda a partir de una distribucion.
-	\item La capacidad del vehiculo de reparto se divide entre la mercancia que debe repartir y la que recoge de los nodos y cuya suma no puede exceder la capacidad total del vehiculo.
+	\item Asignación determinista de oferta y demanda, en contraposición a la variante estocástica que asigna valores para oferta y demanda a partir de una distribución.
+	\item La capacidad del vehiculo de reparto se divide entre la mercancía que debe repartir y la que recoge de los nodos y cuya suma no puede exceder la capacidad total del vehiculo.
+	\item Mercancía para entregar y la que se recoge de los nodos, no se mezcla ni se reparte entre nodos.
    \end{itemize} 
 
    \item) \textbf{Revisión de la literatura}\\[0.2cm]
 
    \item) \textbf{Algoritmo desarrollado}\\[0.2cm]
-A partir del algoritmo \textit{Clarke and Wright Savings} (CWS) hemos añadido el inicio sesgado como método para mejorar las soluciones ya portar variabilidad a los resultados.
+A partir del algoritmo \textit{Clarke and Wright Savings} (CWS) hemos añadido el inicio sesgado como método para mejorar las soluciones y aportar variabilidad a los resultados.
 
 El algoritmo básico tiene 3 fases:
 \renewcommand{\labelenumii}{\arabic{enumii}}
@@ -212,17 +213,17 @@ El algoritmo básico tiene 3 fases:
 
 Las principales diferencias con respecto al algoritmo presentado en la PEC anterior son:
 \begin{enumerate}
-\item Introduccion del parametro "pick-up" o "supply" que hace referencia al numero de items que cada nodo tiene para ser recogido por el vehiculo de reparto.
+\item Introduccion del parametro "pick-up" o "supply" que hace referencia al número de items que cada nodo tiene para ser recogido por el vehiculo de reparto.
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth, height=6cm]{Node.png} 
 \end{figure}
-\item Uso de valores para la oferta y demanda generados de manera aleatoria en cada ejecución, siguiendo una dsitribucion definida por la media y la desviación estandar independientes.
+\item La opción de usar valores para la oferta y demanda generados de manera aleatoria en cada ejecución, siguiendo una dsitribucion definida por la media y la desviación estandar independientes.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.55\linewidth, height=6cm]{StochDistrib.png} 
 \end{figure}
-\item Modificación de las condiciones necesarias para combinar dos rutas, teniendo en cuenta que ahora al visitar un nuevo nodo, se debera tener en cuenta que se pueda satisfacer la demanda y tener espacio en el vehiculo para recoger los "supplies" del nodo.
+\item Modificación de las condiciones necesarias para combinar dos rutas, teniendo en cuenta que ahora al visitar un nuevo nodo, se deberá tener en cuenta que se pueda satisfacer la demanda y tener espacio en el vehiculo para recoger los "supplies" del mismo.
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth, height=6cm]{merge.png} 
