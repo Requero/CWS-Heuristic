@@ -16,28 +16,50 @@ import shutil
 #from ibm_botocore.client import Config
 #import ibm_boto3
 
+def betaDistribution(mean, std):
+    n = 1000
+    mu = mean/n
+    sigma = std/n
+    alfa = abs(((1-mu)/(sigma**2)-(1/mu))*mu**2)
+    beta = abs(alfa*((1/mu)-1))
+    return 1000*np.random.beta(alfa, beta)
 
+def generateStochasticValue(mean, desv):
+    factor = mean**2/desv**2
+    if factor < 15:
+        return betaDistribution(mean, desv) 
+    else:
+        return np.random.normal(mean, desv)
+    
 def VRPPDDeterministic(instanceData):
     #instanceName, veCap, nodeMatrix
     instanceCws = cws.HeuristicSequential(instanceData[0], instanceData[1], instanceData[2])
     instanceCws.runCWSSol()
     return np.array([instanceData[0],instanceData[1], instanceCws.getCost()])
 
-def VRPPDStochastic(instanceData, nIterations, beta, isRCU, splittingType):
-    #instanceData, nIterations, betas,  isRCUs, splittingTypes
-    localInstanceCws = cws.HeuristicSequential(instanceData[0], instanceData[1], instanceData[2])
+def VRPPDStochastic(params): #instanceData, nIterations, beta):
+    instanceData, nIterations, beta = params[0], params[1], params[2]
+    nodeMatrixStochastic = []
+    
+    for node in instanceData[2]:
+        demand_stochastic = 0 if node[0] == 0.0 else np.ceil(generateStochasticValue(node[3], node[4]))
+        supply_stochastic = 0 if node[0] == 0.0 else np.ceil(generateStochasticValue(node[5], node[6]))
+        nodeMatrixStochastic.append([node[0],node[1], node[2], demand_stochastic, supply_stochastic])
+    minCost = 100000
+    
+    localInstanceCws = cws.HeuristicSequential(instanceData[0], instanceData[1], nodeMatrixStochastic)
     bestSol = vrp.Solution()
     bestSol.cost = 1000000000
     #startTime = time.time()
     minCost = 100000
     for iteration in range(nIterations):
-        localInstanceCws.runCWSSolGeneral(beta, isRCU, splittingType)
+        localInstanceCws.runCWSSolGeneral(beta)
         sol = localInstanceCws.getSolution()
         if sol.cost < minCost:
             bestSol = copy.deepcopy( sol )
             minCost = bestSol.cost
     #deltaTime = time.time() - startTime
-    return [instanceData[0], instanceData[1], beta, isRCU, 'Random' if splittingType == 'Null' else splittingType, minCost]
+    return [instanceData[0], instanceData[1], minCost]
 
 
 def readInstances(storage,params):
@@ -97,20 +119,7 @@ def generateAdditionalData(instanceData):
     df.to_csv(r'./instancesmod/'+instanceName+'_'+str(int(capacity))+'.csv', index=False)
 
 
-def betaDistribution(mean, std):
-    n = 1000
-    mu = mean/n
-    sigma = std/n
-    alfa = abs(((1-mu)/(sigma**2)-(1/mu))*mu**2)
-    beta = abs(alfa*((1/mu)-1))
-    return 1000*np.random.beta(alfa, beta)
 
-def generateStochasticValue(mean, desv):
-    factor = mean**2/desv**2
-    if factor < 15:
-        return betaDistribution(mean, desv) 
-    else:
-        return np.random.lognormal(mean, desv)
 
 def costsStocksSimulation(instanceFile, cost_demand, cost_supply, isStochastic, nIterations):
     df = pd.read_csv('/instancesmod/'+str(instanceFile)+'.csv', encoding='utf-8')
@@ -136,7 +145,7 @@ def costsStocksSimulation(instanceFile, cost_demand, cost_supply, isStochastic, 
                 dfCosts['costs'][i] = df['demand_mean'][i]*cost_demand + df['supply_mean'][i]*cost_supply
     return dfCosts
 
-def readNewInstancesLocal(fileName):
+def readNewInstancesDeterminsticData(fileName):
     #bucket_name, vehCaps, file
     df = pd.read_csv('instancesmod/'+fileName)
     instanceName = fileName.split('_')[0]
@@ -150,6 +159,22 @@ def readNewInstancesLocal(fileName):
         #nodeMatrix.append([i, float(data['x']), float(data['y']), float(data['demand'])])
         nodeMatrix.append([row[0], row[1], row[2], row[3], row[5]])
     return [instanceName, int(capacity), nodeMatrix]
+
+def readNewInstancesStochasticData(fileName):
+    #bucket_name, vehCaps, file
+    df = pd.read_csv('instancesmod/'+fileName)
+    instanceName = fileName.split('_')[0]
+    capacity = fileName.split('_')[1].split('.')[0]
+    #fileobject = storage.get_object(params[0], params[2]['Key'], stream=True)
+    #instanceName = str(params[2]['Key']).replace('instances/', '').replace('_input_nodes.txt', '')
+    #dfPoints=pd.read_csv(fileobject, sep='\t', names=['x', 'y', 'demand'])
+    nodeMatrix = []
+    rows = df.values.tolist()
+    for row in rows:
+        #nodeMatrix.append([i, float(data['x']), float(data['y']), float(data['demand'])])
+        nodeMatrix.append([row[0], row[1], row[2], row[3], row[4], row[5], row[6]])
+    return [instanceName, int(capacity), nodeMatrix]
+
 
 def generateDeterministicInstances(fileName):
     #bucket_name, vehCaps, file
@@ -203,19 +228,50 @@ def SimCWS(buckets):
 
     # Read csvs
     filesmod = os.listdir('instancesmod/')
-    print(filesmod)
-    instanceData = []
+    instanceDataDeterm = []
     for file in filesmod:
-        instanceData.append(readNewInstancesLocal(file))
-
-    
+        instanceDataDeterm.append(readNewInstancesDeterminsticData(file))
+    instanceDataStoch = []
+    for file in filesmod:
+        instanceDataStoch.append(readNewInstancesStochasticData(file))
     #Deterministic case
+    if True== False:
+        costsCWSDet = []
+        for instance in instanceDataDeterm:
+            costsCWSDet.append(VRPPDDeterministic(instance))
+        dfCostsCWSDet = pd.DataFrame(costsCWSDet,columns = ["Instance", "Capacity", "Original"])
+        print(dfCostsCWSDet)
+        costsCWSSto = []
+        for instance in instanceDataStoch:
+            costsCWSSto.append(VRPPDStochastic(instance, 100,0.0))
+        dfCostsCWSSto = pd.DataFrame(costsCWSSto,columns = ["Instance", "Capacity", "Original"])
+        print(costsCWSSto)
+
     isLocal = True
     if isLocal:
-        costsCWS = []
-        for instance in instanceData:
-            costsCWS.append(VRPPDDeterministic(instance))
-        dfCostsCWS = pd.DataFrame(costsCWS,columns = ["Instance", "Capacity", "Original"])
+        pool = mp.Pool()
+        costsCWSDeterm = pool.map(VRPPDDeterministic,instanceDataDeterm)
+    dfCostsCWSDeterm = pd.DataFrame(costsCWSDeterm,columns = ["Instance", "Capacity", "Original"])
+    print(dfCostsCWSDeterm)
+    
+    betas = [0.0]#, 0.3, 0.5, 0.8]
+    nIterations = [100]
+    paramlist2 = list(it.product(instanceDataStoch, nIterations, betas))
+    if True== True:
+        costsCWSSto = []
+        for instance in paramlist2:
+            costsCWSSto.append(VRPPDStochastic(instance))
+        dfCostsCWSSto = pd.DataFrame(costsCWSSto,columns = ["Instance", "Capacity", "Original"])
+        print(dfCostsCWSSto)
+    isLocal = False
+    if isLocal:
+        pool = mp.Pool()
+        costsCWSStoch = pool.map(VRPPDStochastic,paramlist2)
+        dfCostsCWSStoch = pd.DataFrame(costsCWSStoch,columns = ["Instance", "Capacity", "Original"])
+        print(dfCostsCWSStoch)
+    
+    #Stocastic case
+    
     # else:
     #     #CWS problem
     #     fexec1 = lth.FunctionExecutor(runtime=runtime)
@@ -224,7 +280,6 @@ def SimCWS(buckets):
     #     fexec1.plot(dst='lithops_plots/CWS')
     #     fexec1.clean()
 
-    print(dfCostsCWS)
     #SRGCWS problem
     #Data
     nIterations = [100]
@@ -261,7 +316,7 @@ def SimCWS(buckets):
     #file3 = open('./output/beta08.text', 'a')
     #file3.write(dfBetas[2].to_latex())
     #file3.close()
-    return [dfCostsCWS]#, dfsCostsSRGCWSBeta[0], dfsCostsSRGCWSBeta[1], dfsCostsSRGCWSBeta[2]]
+    #return [dfCostsCWS]#, dfsCostsSRGCWSBeta[0], dfsCostsSRGCWSBeta[1], dfsCostsSRGCWSBeta[2]]
 
 def main():
     buckets = ['bucketlithops', 'lithopsbucket3']

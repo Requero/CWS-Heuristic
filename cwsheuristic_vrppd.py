@@ -24,7 +24,6 @@ class HeuristicSequential:
         self.vehCap = vehCap
         self.nodes = []
         for nodeData in nodeMatrix:
-            print(nodeData)
             # array  data with node data: ID, x, y, demand, supply
             self.nodes.append(Node(nodeData[0], nodeData[1], nodeData[2], nodeData[3], nodeData[4]))
 
@@ -53,10 +52,9 @@ class HeuristicSequential:
         biasedList = self.generateBiasedSavingsList(beta)
         self.edgeSelectionRoutingMerging(biasedList)
 
-    def generateBiasedSavingsList(self):
+    def generateBiasedSavingsList(self, beta):
         copySavings = self.savingsList.copy()
         biasedSavings = []
-        beta = 0.5
         for i in range(len(copySavings)):
             index = int(math.log(random.random()) / math.log(1 - beta) )
             index = index % len(copySavings)
