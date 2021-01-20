@@ -94,9 +94,16 @@ Desde mi punto de vista lo más destacable seria:
 
 \subsection{A simheuristic algorithm for the Single-Period Stochastic Inventory-Routing Problem with stock-out(Juan, A. et. al. (2014))}
 
+El problema de enrutamiento de inventarios (IRP) integra los problemas de gestión de inventarios por parte del vendedor (VMI) y enrutamiento de vehículos de distribución (VRP). Partiendo de un centro de distribución se ha de suministrar un producto a un conjunto de centros con un stock inicial y una demanda. El objetivo de es minimizar los costes de transporte, inventario y de rotura de stock. \\[0.2cm]
+Una de las variables principales del problema, la demanda, se puede modelar tanto desde un enfoque determinista como estocástico, en este caso aportando un mayor nivel de realismo y complejidad. Para resolver el IRP se propone un algoritmo simheurístico que combina simulación y el uso de una heurística aleatorizada. Se emplea la simulación de Monte Carlo para estimar los costes de inventario y rotura de stocks asociados a distintos escenarios de cada centro. Los costes de transporte de cada escenario se calculan empleando la heurística CWS. Se elige el escenario con menores costes totales como escenario base y se proponen nuevos escenarios para cada centro dentro del tiempo de computación establecido, seleccionándose como mejor solución aquella con menores costos totales. Con la finalidad de que las contribuciones de costes de inventario y costes de transporte sean similares, han de tener un mismo orden de magnitud. De no ser así el problema se correspondería a CVRP en el caso de costes de transporte elevados o a una estrategia descentralizada si los costes de inventarios son elevados.\\[0.2cm]
 
 \textbf{Valoración}\\[0.2cm]
 
+En el artículo se expone de forma detallada la motivación y los antecedentes que originan el concepto e IRP. Se valoran las distintas variaciones del problema y se expone la importancia de la elección de modelos estocásticos frente a determinísticos. La introducción permite al lector comprehender la totalidad del articulo sin necesidad de un conocimiento profundo del problema en particular. Además, introduce la motivación de usar simulación de Monte Carlo en combinación con las heurísticas típicamente empleadas en la resolución de problemas VRP. \\[0.2cm]
+Resulta destacable, frente a otros artículos, que se desarrolla con mayor nivel de detalle el contenido y las implicaciones de los trabajos previos, permitiendo valorar mejor el desarrollo propuesto dentro de su ámbito. Otro aspecto reseñable es el énfasis que han hecho los autores en destacar los valores numéricos, las premisas y otra información técnica necesaria para reproducir la parte experimental del trabajo. Ya se indica que en otros trabajos similares esta información no se aporta, siendo imposible establecer una comparación cuantitativa entre distintas soluciones. \\[0.2cm]
+Por último se ha de indicar que todo lo anterior se consigue en una extensión optima lo que facilita su lectura y pone en valor una buena labor de síntesis. 
+
+\clearpage
 
 \subsection{A review of simheuristics: Extending metaheuristics to deal with stochastic combinatorial optimization problems (Juan, A. et. al. (2015))}
 
