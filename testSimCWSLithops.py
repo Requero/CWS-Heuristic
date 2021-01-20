@@ -2,6 +2,9 @@ import os
 from pathlib import Path
 from io import StringIO
 import sys
+
+import pandas
+
 import cwsheuristiclithops as cws
 import copy
 import vrp_objects as vrp
@@ -10,6 +13,7 @@ import pandas as pd
 import lithops as lth
 import numpy as np
 from lithops import Storage
+import numpy as np
 import itertools as it
 import shutil
 from ibm_botocore.client import Config
@@ -121,7 +125,20 @@ def beta(mean, std):
     beta = abs(alfa*((1/mu)-1))
     return 1000*np.random.beta(alfa, beta)
 
-def costsStocksSimulation(instanceFile, cost_demand, cost_supply, isStochastic, nIterations):
+def setDemandAndSupply(demand_mean, demand_desv, supply_mean, supply_desv):
+    factor1 = demand_mean ** 2 / demand_desv ** 2
+    factor2 = supply_mean ** 2 / supply_desv ** 2
+    if factor1 < 15:
+        demand = beta(demand_mean, demand_desv)
+    else:
+        demand = np.random.lognormal(demand_mean, demand_desv)
+    if factor2 < 15:
+        supply = beta(supply_mean, supply_desv)
+    else:
+        supply = np.random.lognormal(supply_mean, supply_desv)
+    return demand, supply
+
+def costsStocksSimulation(instanceFile, cost_demand = 0.05, cost_supply = 0.05, isStochastic = False, nIterations = 10000):
     df = pandas.read_csv('/instancesmod/'+str(instanceFile)+'.csv', encoding='utf-8')
     dfCosts = pd.DataFrame(columns = ['costs'])
     dfCostsTemp = pd.DataFrame()
@@ -133,16 +150,9 @@ def costsStocksSimulation(instanceFile, cost_demand, cost_supply, isStochastic, 
                 demand_desv = df['demand_desv'][i]
                 supply_mean = df['supply_mean'][i]
                 supply_desv = df['supply_desv'][i]
-                factor1 = demand_mean**2/demand_desv**2
-                factor2 = supply_mean**2/supply_desv**2
-                if factor1 < 15:
-                    demand = beta(demand_mean, demand_desv) 
-                else:
-                    demand = numpy.random.lognormal(demand_mean, demand_desv)
-                if factor2 < 15:
-                    supply = beta(supply_mean, supply_desv) 
-                else:
-                    supply = numpy.random.lognormal(supply_mean, supply_desv)
+
+                demand, supply = setDemandAndSupply(demand_mean, demand_desv, supply_mean, supply_desv)
+
                 dfCostsTemp['cost_'+str(j)][i] = demand * cost_demand + supply * cost_supply
         dfCosts = dfCostsTemp.mean(axis=1)    
     else:
@@ -152,6 +162,22 @@ def costsStocksSimulation(instanceFile, cost_demand, cost_supply, isStochastic, 
             else:
                 dfCosts['costs'][i] = df['demand_mean'][i]*cost_demand + df['supply_mean'][i]*cost_supply
     return dfCosts
+
+def readCsvInstances(filename):
+    dirname, f = os.path.split(os.path.abspath(__file__))
+    dirname = dirname + "\\instancesmod"
+    instanceName = str(filename).replace(dirname + "\\", '').replace('.csv', '')
+    vehicle_capacity = int(instanceName.split("_")[1])
+    # replace('.txt')
+    with open(filename) as instance:
+        costs = []
+        nodeMatrix = []
+        for line in instance:
+            # array  data with node data: x, y, demand
+            data = [float(x) for x in line.split(",")]
+            demand, supply = setDemandAndSupply(data[3], data[4], data[5], data[6])
+            nodeMatrix.append([data[0], data[1], data[2], demand, supply])
+    return (instanceName, vehicle_capacity, nodeMatrix)
 
 def SimCWS(buckets):
 
@@ -170,20 +196,27 @@ def SimCWS(buckets):
     
     #Read instances
     fexec = lth.FunctionExecutor(runtime=runtime)
-    paramlist =[]
-    files = np.reshape(files, (int(len(files)/2),2))
-    for file in files:
-        paramlist.append([bucket, file[0], file[1]])
-    fexec.map(readInstances, paramlist)
-    instanceData = fexec.get_result()
-    fexec.clean()
-    shutil.rmtree('./output')
-    os.mkdir('./output')
+    dirname, f = os.path.split(os.path.abspath(__file__))
+    dirname = dirname + "\\instancesmod"
+    folder = Path(dirname).rglob('*.csv')
+    files = [x for x in folder]
 
-    shutil.rmtree('./instancesmod')
-    os.mkdir('./instancesmod')
-    for i in instanceData:
-        generateAdditionalData(i)
+    fexec.map(readCsvInstances, files)
+    instanceData = fexec.get_result()
+    # paramlist =[]
+    # files = np.reshape(files, (int(len(files)/2),2))
+    # for file in files:
+    #     paramlist.append([bucket, file[0], file[1]])
+    # fexec.map(readInstances, paramlist)
+    # instanceData = fexec.get_result()
+    # fexec.clean()
+    # shutil.rmtree('./output')
+    # os.mkdir('./output')
+    #
+    # shutil.rmtree('./instancesmod')
+    # os.mkdir('./instancesmod')
+    # for i in instanceData:
+    #     generateAdditionalData(i)
     #CWS problem
     fexec1 = lth.FunctionExecutor(runtime=runtime)
     fexec1.map(testCWS, instanceData)
@@ -194,27 +227,27 @@ def SimCWS(buckets):
 
     #SRGCWS problem
     #Data
-    nIterations = [100]
+    # nIterations = [100]
     #isRCUs = [False, True]
-    rcPolicies = ['NoRefill', 'Refill1/4', 'Refill1/2', 'Refill3/4', 'RefillFull', 'RefillOpt']
-    paramlist2 = list(it.product(instanceData, nIterations, betas,  isRCUs, splittingTypes))
+    # rcPolicies = ['NoRefill', 'Refill1/4', 'Refill1/2', 'Refill3/4', 'RefillFull', 'RefillOpt']
+    # paramlist2 = list(it.product(instanceData, nIterations, betas,  isRCUs, splittingTypes))
 
     #Execution
-    fexec2 = lth.FunctionExecutor(runtime=runtime)
-    fexec2.map(testSRGCWS, paramlist2)
-    costSRGCWS = fexec2.get_result()
-    fexec2.plot(dst='lithops_plots/SRGCWS') 
-    fexec2.clean()
+    # fexec2 = lth.FunctionExecutor(runtime=runtime)
+    # fexec2.map(testSRGCWS, paramlist2)
+    # costSRGCWS = fexec2.get_result()
+    # fexec2.plot(dst='lithops_plots/SRGCWS')
+    # fexec2.clean()
 
-    dfCostsSRGCWS = pd.DataFrame(costSRGCWS, columns = ['Instance', 'Capacity', 'Beta', 'RCU','SplittingType', 'Cost'])
+    # dfCostsSRGCWS = pd.DataFrame(costSRGCWS, columns = ['Instance', 'Capacity', 'Beta', 'RCU','SplittingType', 'Cost'])
     
     #Get one dataframe for each beta
-    dfsCostsSRGCWS  = [dfCostsSRGCWS[dfCostsSRGCWS['Beta']==0.3], dfCostsSRGCWS[dfCostsSRGCWS['Beta']==0.5], dfCostsSRGCWS[dfCostsSRGCWS['Beta']==0.8]]
+    # dfsCostsSRGCWS  = [dfCostsSRGCWS[dfCostsSRGCWS['Beta']==0.3], dfCostsSRGCWS[dfCostsSRGCWS['Beta']==0.5], dfCostsSRGCWS[dfCostsSRGCWS['Beta']==0.8]]
 
-    dfsCostsSRGCWSBeta = []
+    # dfsCostsSRGCWSBeta = []
     #Reshape dataframes
-    for df in dfsCostsSRGCWS:
-        dfsCostsSRGCWSBeta.append(generateColumns(df,dfCostsCWS))
+    # for df in dfsCostsSRGCWS:
+    #     dfsCostsSRGCWSBeta.append(generateColumns(df,dfCostsCWS))
 
     #Save results
     #file1 = open('./output/beta03.text', 'a')
@@ -228,7 +261,7 @@ def SimCWS(buckets):
     #file3 = open('./output/beta08.text', 'a')
     #file3.write(dfBetas[2].to_latex())
     #file3.close()
-    return [dfCostsCWS, dfsCostsSRGCWSBeta[0], dfsCostsSRGCWSBeta[1], dfsCostsSRGCWSBeta[2]]
+    return [dfCostsCWS]#, dfsCostsSRGCWSBeta[0], dfsCostsSRGCWSBeta[1], dfsCostsSRGCWSBeta[2]]
 
 def main():
     buckets = ['bucketlithops', 'lithopsbucket3']
