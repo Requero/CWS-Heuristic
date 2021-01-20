@@ -30,7 +30,15 @@ def generateStochasticValue(mean, desv):
         return betaDistribution(mean, desv) 
     else:
         return np.random.normal(mean, desv)
-    
+
+def getNodeMatrixaWithStochasticDemandAndSuppy(nodeMatrix):
+    nodeMatrixStochastic = []
+    for node in nodeMatrix:
+        demand_stochastic = 0 if node[0] == 0.0 else np.ceil(generateStochasticValue(node[3], node[4]))
+        supply_stochastic = 0 if node[0] == 0.0 else np.ceil(generateStochasticValue(node[5], node[6]))
+        nodeMatrixStochastic.append([node[0],node[1], node[2], demand_stochastic, supply_stochastic])
+    return nodeMatrixStochastic
+
 def VRPPDDeterministic(instanceData):
     #instanceName, veCap, nodeMatrix
     instanceCws = cws.HeuristicSequential(instanceData[0], instanceData[1], instanceData[2])
@@ -39,14 +47,8 @@ def VRPPDDeterministic(instanceData):
 
 def VRPPDStochastic(params): #instanceData, nIterations, beta):
     instanceData, nIterations, beta = params[0], params[1], params[2]
-    nodeMatrixStochastic = []
-    
-    for node in instanceData[2]:
-        demand_stochastic = 0 if node[0] == 0.0 else np.ceil(generateStochasticValue(node[3], node[4]))
-        supply_stochastic = 0 if node[0] == 0.0 else np.ceil(generateStochasticValue(node[5], node[6]))
-        nodeMatrixStochastic.append([node[0],node[1], node[2], demand_stochastic, supply_stochastic])
     minCost = 100000
-    
+    instanceDataStochasticValues = getNodeMatrixaWithStochasticDemandAndSuppy(instanceData[2])
     localInstanceCws = cws.HeuristicSequential(instanceData[0], instanceData[1], nodeMatrixStochastic)
     bestSol = vrp.Solution()
     bestSol.cost = 1000000000
