@@ -112,7 +112,7 @@ def generateAdditionalData(instanceData):
     df['supply_desv'] = np.insert(supply_desv, 0, 0)
     df.to_csv(r'./instancesmod/'+instanceName+'_'+str(int(capacity))+'.csv', index=False)
 
-#Districuión beta para el caso en el que 0.65 < mu**2/sigma**2 < 15
+#Distribución beta para el caso en el que 0.65 < mu**2/sigma**2 < 15
 def beta(mean, std):
     n = 1000
     mu = mean/n

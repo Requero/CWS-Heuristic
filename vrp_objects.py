@@ -1,15 +1,15 @@
 class Node:
     
     def __init__(self, ID, x, y, demand, supply):
-        self.ID = ID # node identifier (depot ID = 0)
-        self.x = x # Euclidean x-coordinate
-        self.y = y # Euclidean y-coordinate
-        self.demand = demand # demand (is 0 for depot and positive for others)
-        self.supply = supply # supply (is 0 for depot and positive for others)
-        self.inRoute = None # route to which node belongs
-        self.isInterior = False # an interior node is not connected to depot
+        self.ID = ID  # node identifier (depot ID = 0)
+        self.x = x  # Euclidean x-coordinate
+        self.y = y  # Euclidean y-coordinate
+        self.demand = demand  # demand (is 0 for depot and positive for others)
+        self.supply = supply  # supply (is 0 for depot and positive for others)
+        self.inRoute = None  # route to which node belongs
+        self.isInterior = False  # an interior node is not connected to depot
         self.dnEdge = None  # edge (arc) from depot   to this node
-        self.ndEdge = None # edge  (arc) from this node to depot
+        self.ndEdge = None  # edge  (arc) from this node to depot
     
 
 class Edge:
@@ -26,10 +26,12 @@ class Edge:
 
 class Route:
     
-    def __init__(self):
-        self.cost = 0.0 # cost of this route
-        self.edges = [] #sorted edges in this route
-        self.demand = 0.0 # total demand covered by this route
+    def __init__(self, capacity):
+        self.cost = 0.0  # cost of this route
+        self.edges = []  # sorted edges in this route
+        self.capacity = capacity  # vehicle capacity
+        self.to_serve = self.capacity/2  # starting number of items to cover demand
+        self.pick_space = self.capacity-self.to_serve  # starting capacity to cover pick-ups
     
     def reverse(self): # e.g. 0 -> 2 -> 6 -> 0 becomes 0 -> 6 -> 2 -> 0
         size = len(self.edges)
@@ -38,6 +40,18 @@ class Route:
             invEdge = edge.invEdge
             self.edges.remove(edge)
             self.edges.insert(0, invEdge)
+
+    def removeEdge(self, edge):
+        self.edges.remove(edge)
+        self.cost -= edge.cost
+        self.to_serve += edge.demandRequired  # If not served, capacity to serve increases
+        self.pick_space += edge.supplyGiven  # If not picked up, capacity to pick-up increases
+
+    def addEdge(self, edge):
+        self.edges.append(edge)
+        self.cost += edge.cost
+        self.to_serve -= edge.demandRequired  # If not served, capacity to serve increases
+        self.pick_space -= edge.supplyGiven  # If not picked up, capacity to pick-up increases
             
 class Solution:
     
@@ -48,5 +62,4 @@ class Solution:
         self.ID = Solution.last_ID
         self.routes = []  # routes in this solution
         self.cost = 0.0  # cost of this solution
-        self.demand = 0.0 # total demand covered by this solution
    
