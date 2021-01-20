@@ -198,7 +198,30 @@ Para esta segunda revisión del algoritmo añadimos las siguientes restricciones
 	\item Mercancía para entregar y la que se recoge de los nodos, no se mezcla ni se reparte entre nodos.
    \end{itemize} 
 
-   \item) \textbf{Revisión de la literatura}\\[0.2cm]
+   \item) \textbf{Revisión de la literatura}
+
+Hemos revisado los siguientes artículos para afrontar el problema con garantías:
+	\begin{enumerate}
+		\item Juan, A., Faulin, J., Grasman, S.E., Rabe, M., and Figueira, G. (2015). A review of simheuristics: Extending metaheuristics to deal with stochastic combinatorial optimization problems
+		
+		En este artículo nos hablan de cómo se puede extender la metaheurística para hacer frente a problemas de optimización combinatoria. Basándose en soluciones a problemas deterministas, simulan estas soluciones y los resultados de la simulación permiten analizar si son soluciones para el problema estocástico. 
+		Simular el determinismo puede dar respuestas a lo estocástico.
+		
+		\item Juan, A., Barrios, B., Vallada, E., Riera, D., and Jorba, J. (2014). A simheuristic algorithm for solving the permutation flow shop problem with stochastic processing times.
+		
+		Aquí nos hablan sobre el Flow Shop Scheduling Problem (FSP) su variación con permutaciones y la generalización con tiempos de trabajo estocásticos. Se basan en trabajos deterministas para trabajar la parte estocástica.
+		
+		\item Juan, A., Grasman, S., Caceres, J., Bektas, T. (2014). A Simheuristic Algorithm for the Single-Period Stochastic Inventory Routing Problem with Stock-outs.
+		
+		Este artículo habla sobre el enrutamiento de inventarios (IRP) que integra la gestión de inventarios y enrutamiento de vehículos (VMI y VRP). Proponen un algoritmo simheurístico. Emplean la simulación de Monte Carlo para costes de inventario y heurística CWS para los costes de transporte.
+		
+		\item Calvet, L., De Armas, J., Masip, D., and Juan, A. (2017). Learnheuristics: hybridizing metaheuristics with machine learning for optimization with dynamic inputs.
+		
+		Por último, este articulo nos habla sobre las combinaciones que pueden hacerse entre metaheurísticos y ‘Machine Learning’ para la optimización de problemas. Además, presenta ‘LearnHeuristic’, que es una manera de trabajar que ayuda a resolver problemas de combinatoria mediante estas combinaciones.
+\end{enumerate}
+
+Estos artículos nos han permitido entender mejor el problema, aunque el artículo en el que nos hemos inspirado y nos ha ayudado más ha sido el articulo de Juan, A et. al. 2014 (3). Es semejante al VRPPD y además utiliza simulación de Monte Carlo y CWS con el que estábamos familiarizados al usarlo en la práctica anterior.
+
 
    \item) \textbf{Algoritmo desarrollado}\\[0.2cm]
 A partir del algoritmo \textit{Clarke and Wright Savings} (CWS) hemos añadido el inicio sesgado como método para mejorar las soluciones y aportar variabilidad a los resultados.
