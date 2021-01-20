@@ -7,7 +7,7 @@ import copy
 import vrppd_objects as vrp
 import time
 import pandas as pd 
-#import lithops as lth
+import lithops as lth
 import numpy as np
 #from lithops import Storage
 import multiprocessing as mp
@@ -45,10 +45,27 @@ def VRPPDDeterministic(instanceData):
     instanceCws.runCWSSol()
     return np.array([instanceData[0],instanceData[1], instanceCws.getCost()])
 
+def VRPPDStochasticLithops(instanceData, nIterations, beta):
+    minCost = 100000
+    nodeMatrixStochastic = getNodeMatrixaWithStochasticDemandAndSuppy(instanceData[2])
+    localInstanceCws = cws.HeuristicSequential(instanceData[0], instanceData[1], nodeMatrixStochastic)
+    bestSol = vrp.Solution()
+    bestSol.cost = 1000000000
+    #startTime = time.time()
+    minCost = 100000
+    for iteration in range(nIterations):
+        localInstanceCws.runCWSSolGeneral(beta)
+        sol = localInstanceCws.getSolution()
+        if sol.cost < minCost:
+            bestSol = copy.deepcopy( sol )
+            minCost = bestSol.cost
+    #deltaTime = time.time() - startTime
+    return [instanceData[0], instanceData[1], beta, minCost]
+
 def VRPPDStochastic(params): #instanceData, nIterations, beta):
     instanceData, nIterations, beta = params[0], params[1], params[2]
     minCost = 100000
-    instanceDataStochasticValues = getNodeMatrixaWithStochasticDemandAndSuppy(instanceData[2])
+    nodeMatrixStochastic = getNodeMatrixaWithStochasticDemandAndSuppy(instanceData[2])
     localInstanceCws = cws.HeuristicSequential(instanceData[0], instanceData[1], nodeMatrixStochastic)
     bestSol = vrp.Solution()
     bestSol.cost = 1000000000
@@ -236,54 +253,50 @@ def SimCWS(buckets):
     instanceDataStoch = []
     for file in filesmod:
         instanceDataStoch.append(readNewInstancesStochasticData(file))
-    #Deterministic case
-    if True== False:
-        costsCWSDet = []
-        for instance in instanceDataDeterm:
-            costsCWSDet.append(VRPPDDeterministic(instance))
-        dfCostsCWSDet = pd.DataFrame(costsCWSDet,columns = ["Instance", "Capacity", "Original"])
-        print(dfCostsCWSDet)
-        costsCWSSto = []
-        for instance in instanceDataStoch:
-            costsCWSSto.append(VRPPDStochastic(instance, 100,0.0))
-        dfCostsCWSSto = pd.DataFrame(costsCWSSto,columns = ["Instance", "Capacity", "Original"])
-        print(costsCWSSto)
 
-    isLocal = True
-    if isLocal:
+    runtime  = 'lithopscloud/ibmcf-python-v38:2021.01'
+    #Deterministic case
+    withParalelization1  = True
+    if withParalelization1:
         pool = mp.Pool()
         costsCWSDeterm = pool.map(VRPPDDeterministic,instanceDataDeterm)
-    dfCostsCWSDeterm = pd.DataFrame(costsCWSDeterm,columns = ["Instance", "Capacity", "Original"])
+    else:
+        costsCWSDeterm= []
+        for instance in instanceDataDeterm:
+            costsCWSDeterm.append(VRPPDDeterministic(instance))
+    dfCostsCWSDeterm = pd.DataFrame(costsCWSDeterm,columns = ["Instance", "Capacity", "Deterministic"])
     print(dfCostsCWSDeterm)
-    
-    betas = [0.0]#, 0.3, 0.5, 0.8]
-    nIterations = [100]
-    paramlist2 = list(it.product(instanceDataStoch, nIterations, betas))
-    if True== True:
-        costsCWSSto = []
-        for instance in paramlist2:
-            costsCWSSto.append(VRPPDStochastic(instance))
-        dfCostsCWSSto = pd.DataFrame(costsCWSSto,columns = ["Instance", "Capacity", "Original"])
-        print(dfCostsCWSSto)
-    isLocal = False
-    if isLocal:
-        pool = mp.Pool()
-        costsCWSStoch = pool.map(VRPPDStochastic,paramlist2)
-        dfCostsCWSStoch = pd.DataFrame(costsCWSStoch,columns = ["Instance", "Capacity", "Original"])
-        print(dfCostsCWSStoch)
-    
-    #Stocastic case
-    
-    # else:
-    #     #CWS problem
-    #     fexec1 = lth.FunctionExecutor(runtime=runtime)
-    #     fexec1.map(VRPPDDeterministic, instanceData)
-    #     costsCWS = fexec1.get_result()
-    #     fexec1.plot(dst='lithops_plots/CWS')
-    #     fexec1.clean()
 
-    #SRGCWS problem
-    #Data
+    
+    temp1 = pd.DataFrame(instanceDataStoch[0][2])
+    print(temp1)
+    temp2 = pd.DataFrame(getNodeMatrixaWithStochasticDemandAndSuppy(instanceDataStoch[0][2]))
+    print(temp2)
+    #Stochastic case
+    betas = [0.0, 0.3, 0.5, 0.8]
+    nIterations = [10]
+    paramlist1 = list(it.product(instanceDataStoch, nIterations, betas))
+    isCloud = True
+    if isCloud:
+        runtime  = 'lithopscloud/ibmcf-python-v38:2021.01'
+        fexec1 = lth.FunctionExecutor(runtime=runtime)
+        fexec1.map(VRPPDStochasticLithops, paramlist1)
+        costsCWSStoch = fexec1.get_result()
+        fexec1.plot(dst='lithops_plots/Stochastic')
+        fexec1.clean()
+    else: 
+        withParalelization2 = True
+        if withParalelization2:
+            pool = mp.Pool(10)
+            costsCWSStoch = pool.map(VRPPDStochastic,paramlist1)
+        else:
+            costsCWSStoch= []
+            for instance in paramlist1:
+                costsCWSStoch.append(VRPPDStochastic(instance))
+    dfCostsCWSStoch = pd.DataFrame(costsCWSStoch,columns = ["Instance", "Capacity", "Beta", "Stochastic"])
+    print(dfCostsCWSStoch)
+    
+    
     nIterations = [100]
     #isRCUs = [False, True]
     # rcPolicies = ['NoRefill', 'Refill1/4', 'Refill1/2', 'Refill3/4', 'RefillFull', 'RefillOpt']
