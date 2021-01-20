@@ -171,15 +171,41 @@ Como punto negativo hay que mencionar que el articulo puede ser un poco denso y 
 
 \clearpage
 
-{\fontsize{50}{60}\selectfont Diseño y desarrollo de un algoritmo de XXXXXX aplicada al VRP}
+{\fontsize{50}{60}\selectfont Diseño y desarrollo de un algoritmo de busqueda randomizada y heuristica CWS con demanda y recogida aplicada al VRP}
 
 \renewcommand{\labelenumi}{\arabic{enumi}}
  \begin{enumerate}
    \item) \textbf{Introducción}\\[0.2cm]
+El problema del rutaje de vehiculos (VRP de sus siglas en inglés) se centra en la busqueda del mejor conjunto de rutas por las que guiar a una flota de vehiculos de mercancias cuyo deber es abastecer a los clientes. Pero el problema puede ser planteado con diferentes grados de complejidad en funcion de las restricciones y detalles que se quieran considerar con tal de asemejar el sistema cada vez mas al mundo real. Las principales restricciones que se aplican al VRP se basan en:
+   \begin{itemize}
+       \item El uso de vehiculos con una capacidad finita en cuanto al transporte de mercancias.
+       \item Que los vehiculos no pueden visitar dos veces un mismo cliente en su ruta de reparto.
+       \item La presencia de un almacen desde del que todos los vehiculos salen y al que deben volver tras el reparto.
+   \end{itemize} 
+El VRP tiene un gran interes tanto por los beneficios económicos que puede reportar, asi como por los beneficios ecológicos que se pueden deducir del mismo.\\
+
+Para esta segunda revision del algoritmo añadimos las siguientes restricciones basadas en la oferta y la demanda de cada nodo:
+   \begin{itemize}
+       \item Asignación determinista de oferta y demanda, en contraposicion a la variante estocastica que asigna valores para oferta y demanda seleccionados a partir de una distribucion.
+	\item La capacidad del vehiculo de reparto se divide entre la mercancia que debe repartir y la que recoge de los nodos y cuya suma no puede exceder la capacidad total del vehiculo.
+   \end{itemize} 
 
    \item) \textbf{Revisión de la literatura}\\[0.2cm]
 
    \item) \textbf{Algoritmo desarrollado}\\[0.2cm]
+A partir del algoritmo \textit{Clarke and Wright Savings} (CWS) hemos añadido 3 métodos que pueden ser independientes y combinados unos con otros, para mejorar la solución inicial que nos proporciona el algoritmo básico.
+\begin{itemize}
+\item Inicio sesgado.
+\item Método de aprendizaje utilizando una memoria de rutas.
+\item Método “Divide y vencerás”.
+\end{itemize}
+El algoritmo básico tiene 3 fases:
+\renewcommand{\labelenumii}{\arabic{enumii}}
+\begin{enumerate}
+\item Construir las aristas entre los nodos, calculando un coste asociado al movimiento entre nodos, este coste se usa como concepto de ahorro. Se genera una lista ordenada de las aristas que suponen mayor ahorro a menos ahorro.
+\item Construir una solución inicial con rutas desde el nodo inicial al nodo destino, solución que no es eficiente, pero es el punto de partida para ejecutar el siguiente paso.
+\item Se itera la lista de aristas creada y se comprueba si es factible fusionar las rutas que hay desde el nodo inicial a cada nodo en los extremos de la arista, teniendo en cuenta ademas, la capacidad del vehiculo para abastecer la demanda de los nodos y la necesidad de recoger mercancias de los nodos para llevarlos hasta el almacén. Al fusionar las rutas se consigue ahorrar costes y se empieza intentando fusionar las rutas mas costosas (que producen más ahorro).
+\end{enumerate}
 
    \item) \textbf{Experimento computacional y análisis de resultados}\\[0.2cm]
 
