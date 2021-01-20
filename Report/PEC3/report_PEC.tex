@@ -9,6 +9,7 @@
 \usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{pdflscape}
 \usepackage{lscape} 
 \usepackage{rotating}
 \usepackage{longtable}
@@ -191,43 +192,62 @@ El problema del rutaje de vehiculos (VRP de sus siglas en inglés) se centra en 
    \end{itemize} 
 El VRP tiene un gran interes tanto por los beneficios económicos que puede reportar, asi como por los beneficios ecológicos que se pueden deducir del mismo.\\
 
-Para esta segunda revision del algoritmo añadimos las siguientes restricciones basadas en la oferta y la demanda de cada nodo:
+Para esta segunda revisión del algoritmo añadimos las siguientes restricciones basadas en la oferta y la demanda de cada nodo:
    \begin{itemize}
-       \item Asignación determinista de oferta y demanda, en contraposicion a la variante estocastica que asigna valores para oferta y demanda a partir de una distribucion.
-	\item La capacidad del vehiculo de reparto se divide entre la mercancia que debe repartir y la que recoge de los nodos y cuya suma no puede exceder la capacidad total del vehiculo.
+	\item Asignación determinista de oferta y demanda, en contraposición a la variante estocástica que asigna valores para oferta y demanda a partir de una distribución.
+	\item La capacidad del vehiculo de reparto se divide entre la mercancía que debe repartir y la que recoge de los nodos y cuya suma no puede exceder la capacidad total del vehiculo.
+	\item Mercancía para entregar y la que se recoge de los nodos, no se mezcla ni se reparte entre nodos.
    \end{itemize} 
 
-   \item) \textbf{Revisión de la literatura}\\[0.2cm]
+   \item) \textbf{Revisión de la literatura}
+
+Hemos revisado los siguientes artículos para afrontar el problema con garantías:
+	\begin{enumerate}
+		\item Juan, A., Faulin, J., Grasman, S.E., Rabe, M., and Figueira, G. (2015). A review of simheuristics: Extending metaheuristics to deal with stochastic combinatorial optimization problems
+		
+		En este artículo nos hablan de cómo se puede extender la metaheurística para hacer frente a problemas de optimización combinatoria. Basándose en soluciones a problemas deterministas, simulan estas soluciones y los resultados de la simulación permiten analizar si son soluciones para el problema estocástico. 
+		Simular el determinismo puede dar respuestas a lo estocástico.
+		
+		\item Juan, A., Barrios, B., Vallada, E., Riera, D., and Jorba, J. (2014). A simheuristic algorithm for solving the permutation flow shop problem with stochastic processing times.
+		
+		Aquí nos hablan sobre el Flow Shop Scheduling Problem (FSP) su variación con permutaciones y la generalización con tiempos de trabajo estocásticos. Se basan en trabajos deterministas para trabajar la parte estocástica.
+		
+		\item Juan, A., Grasman, S., Caceres, J., Bektas, T. (2014). A Simheuristic Algorithm for the Single-Period Stochastic Inventory Routing Problem with Stock-outs.
+		
+		Este artículo habla sobre el enrutamiento de inventarios (IRP) que integra la gestión de inventarios y enrutamiento de vehículos (VMI y VRP). Proponen un algoritmo simheurístico. Emplean la simulación de Monte Carlo para costes de inventario y heurística CWS para los costes de transporte.
+		
+		\item Calvet, L., De Armas, J., Masip, D., and Juan, A. (2017). Learnheuristics: hybridizing metaheuristics with machine learning for optimization with dynamic inputs.
+		
+		Por último, este articulo nos habla sobre las combinaciones que pueden hacerse entre metaheurísticos y ‘Machine Learning’ para la optimización de problemas. Además, presenta ‘LearnHeuristic’, que es una manera de trabajar que ayuda a resolver problemas de combinatoria mediante estas combinaciones.
+\end{enumerate}
+
+Estos artículos nos han permitido entender mejor el problema, aunque el artículo en el que nos hemos inspirado y nos ha ayudado más ha sido el articulo de Juan, A et. al. 2014 (3). Es semejante al VRPPD y además utiliza simulación de Monte Carlo y CWS con el que estábamos familiarizados al usarlo en la práctica anterior.
+
 
    \item) \textbf{Algoritmo desarrollado}\\[0.2cm]
-A partir del algoritmo \textit{Clarke and Wright Savings} (CWS) hemos añadido 3 métodos que pueden ser independientes y combinados unos con otros, para mejorar la solución inicial que nos proporciona el algoritmo básico.
-\begin{itemize}
-\item Inicio sesgado.
-\item Método de aprendizaje utilizando una memoria de rutas.
-\item Método “Divide y vencerás”.
-\end{itemize}
+A partir del algoritmo \textit{Clarke and Wright Savings} (CWS) hemos añadido el inicio sesgado como método para mejorar las soluciones y aportar variabilidad a los resultados.
+
 El algoritmo básico tiene 3 fases:
 \renewcommand{\labelenumii}{\arabic{enumii}}
-\begin{enumerate}
-\item Construir las aristas entre los nodos, calculando un coste asociado al movimiento entre nodos, este coste se usa como concepto de ahorro. Se genera una lista ordenada de las aristas que suponen mayor ahorro a menos ahorro.
-\item Construir una solución inicial con rutas desde el nodo inicial al nodo destino, solución que no es eficiente, pero es el punto de partida para ejecutar el siguiente paso.
-\item Se itera la lista de aristas creada y se comprueba si es factible fusionar las rutas que hay desde el nodo inicial a cada nodo en los extremos de la arista, teniendo en cuenta ademas, la capacidad del vehiculo para abastecer la demanda de los nodos y la necesidad de recoger mercancias de los nodos para llevarlos hasta el almacén. Al fusionar las rutas se consigue ahorrar costes y se empieza intentando fusionar las rutas mas costosas (que producen más ahorro).
-
-\end{enumerate}
+	\begin{enumerate}
+		\item Construir las aristas entre los nodos, calculando un coste asociado al movimiento entre nodos, este coste se usa como concepto de ahorro. Se genera una lista ordenada de las aristas que suponen mayor ahorro a menos ahorro.
+		\item Construir una solución inicial con rutas desde el nodo inicial al nodo destino, solución que no es eficiente, pero es el punto de partida para ejecutar el siguiente paso.
+		\item Se itera la lista de aristas creada y se comprueba si es factible fusionar las rutas que hay desde el nodo inicial a cada nodo en los extremos de la arista, teniendo en cuenta ademas, la capacidad del vehiculo para abastecer la demanda de los nodos y la necesidad de recoger mercancias de los nodos para llevarlos hasta el almacén. Al fusionar las rutas se consigue ahorrar costes y se empieza intentando fusionar las rutas mas costosas (que producen más ahorro).
+	\end{enumerate}
 
 Las principales diferencias con respecto al algoritmo presentado en la PEC anterior son:
 \begin{enumerate}
-\item Introduccion del parametro "pick-up" o "supply" que hace referencia al numero de items que cada nodo tiene para ser recogido por el vehiculo de reparto.
+\item Introduccion del parametro "pick-up" o "supply" que hace referencia al número de items que cada nodo tiene para ser recogido por el vehiculo de reparto.
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth, height=6cm]{Node.png} 
 \end{figure}
-\item Uso de valores para la oferta y demanda generados de manera aleatoria en cada ejecución, siguiendo una dsitribucion definida por la media y la desviación estandar independientes.
+\item La opción de usar valores para la oferta y demanda generados de manera aleatoria en cada ejecución, siguiendo una dsitribucion definida por la media y la desviación estandar independientes. Para ello, seguimos las recomendaciones obtenidas de las conclusiones del trabajo de Ramaekers, K et. al. 2018, donde se analiza cual es la mejor forma de seleccionar una distribución a la hora de modelar la oferta/demanda. 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.55\linewidth, height=6cm]{StochDistrib.png} 
 \end{figure}
-\item Modificación de las condiciones necesarias para combinar dos rutas, teniendo en cuenta que ahora al visitar un nuevo nodo, se debera tener en cuenta que se pueda satisfacer la demanda y tener espacio en el vehiculo para recoger los "supplies" del nodo.
+\item Modificación de las condiciones necesarias para combinar dos rutas, teniendo en cuenta que ahora al visitar un nuevo nodo, se deberá tener en cuenta que se pueda satisfacer la demanda y tener espacio en el vehiculo para recoger los "supplies" del mismo.
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth, height=6cm]{merge.png} 
@@ -235,6 +255,11 @@ Las principales diferencias con respecto al algoritmo presentado en la PEC anter
 \end{enumerate}
 
    \item) \textbf{Experimento computacional y análisis de resultados}\\[0.2cm]
+
+	\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth, height=6cm]{Result1.png} 
+	\end{figure}
 
    \item) \textbf{Conclusiones y trabajo futuro}\\[0.2cm]
 
@@ -255,5 +280,6 @@ Como trabajo futuro proponemos:
 \end{itemize}
 
  \end{enumerate}
+
 
 \end{document}
