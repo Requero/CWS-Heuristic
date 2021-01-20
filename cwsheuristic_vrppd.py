@@ -185,7 +185,7 @@ class HeuristicSequential:
                 # if there are multiple edges in jRute, the j will be interior
                 if len(jRoute.edges) > 1: jNode.isInterior = True
                 # if  new jRoute  starts at 0 it must be reverse()
-                if jRoute.edges[0].origin == self.depot: jRoute.reverse()
+                if jRoute.edges[0].origin == self.depot : jRoute.reverse()
                 # add ijEdge to iRoute
                 iRoute.addEdge(ijEdge)
                 # add jRoute to new iRoute

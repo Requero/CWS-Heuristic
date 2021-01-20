@@ -4,7 +4,7 @@ from io import StringIO
 import sys
 import cwsheuristic_vrppd as cws
 import copy
-import vrp_objects as vrp
+import vrppd_objects as vrp
 import time
 import pandas as pd 
 import lithops as lth
@@ -97,7 +97,7 @@ def generateAdditionalData(instanceData):
     df.to_csv(r'./instancesmod/'+instanceName+'_'+str(int(capacity))+'.csv', index=False)
 
 
-def beta(mean, std):
+def betaDistribution(mean, std):
     n = 1000
     mu = mean/n
     sigma = std/n
@@ -108,7 +108,7 @@ def beta(mean, std):
 def generateStochasticValue(mean, std):
     factor = mean**2/desv**2
     if factor < 15:
-        return beta(mean, desv) 
+        return betaDistribution(mean, desv) 
     else:
         return numpy.random.lognormal(mean, desv)
 
