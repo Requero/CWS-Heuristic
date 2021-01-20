@@ -10,6 +10,7 @@ import pandas as pd
 import lithops as lth
 import numpy as np
 from lithops import Storage
+import multiprocessing as mp
 import itertools as it
 import shutil
 from ibm_botocore.client import Config
@@ -21,21 +22,6 @@ def testCWS(instanceData):
     instanceCws = cws.HeuristicSequential(instanceData[0], instanceData[1], instanceData[2])
     instanceCws.runCWSSol()
     return np.array([instanceData[0],instanceData[1], instanceCws.getCost()])
-
-def iterationSRGCWS(iteration, instanceData, beta, isRCU, splittingType):
-    localInstanceCws = cws.HeuristicSequential(instanceData[0], instanceData[1], instanceData[2])
-    localInstanceCws.runCWSSolGeneral(beta, isRCU, splittingType)
-    return localInstanceCws.getSolution().cost
-
-def testSRGCWSLithops(instanceData, nIterations, beta, isRCU, splittingType):
-    rangeIterations = list(range(0,nIterations))
-    paramlist = list(it.product(rangeIterations, [instanceData], [beta],[isRCU], [splittingType]))
-    fexec = lth.FunctionExecutor()
-    fexec.map(iterationSRGCWS, paramlist)
-    minCosts = fexec.get_result()
-    fexec.clean()
-    minCost = min(minCosts)
-    return [minCost]#[instanceData[0], instanceData[1], beta, isRCU, 'Random' if splittingType == 'Null' else splittingType, minCost] #, deltaTime
 
 def testSRGCWS(instanceData, nIterations, beta, isRCU, splittingType):
     #instanceData, nIterations, betas,  isRCUs, splittingTypes
@@ -112,7 +98,7 @@ def generateAdditionalData(instanceData):
     df['supply_desv'] = np.insert(supply_desv, 0, 0)
     df.to_csv(r'./instancesmod/'+instanceName+'_'+str(int(capacity))+'.csv', index=False)
 
-#Distribución beta para el caso en el que 0.65 < mu**2/sigma**2 < 15
+
 def beta(mean, std):
     n = 1000
     mu = mean/n
@@ -153,45 +139,77 @@ def costsStocksSimulation(instanceFile, cost_demand, cost_supply, isStochastic, 
                 dfCosts['costs'][i] = df['demand_mean'][i]*cost_demand + df['supply_mean'][i]*cost_supply
     return dfCosts
 
+def readNewInstancesLocal(fileName):
+    #bucket_name, vehCaps, file
+    df = pd.read_csv('instancesmod/'+fileName)
+    instanceName = fileName.split('_')[0]
+    capacity = fileName.split('_')[1].split('.')[0]
+    #fileobject = storage.get_object(params[0], params[2]['Key'], stream=True)
+    #instanceName = str(params[2]['Key']).replace('instances/', '').replace('_input_nodes.txt', '')
+    #dfPoints=pd.read_csv(fileobject, sep='\t', names=['x', 'y', 'demand'])
+    i = 0
+    nodeMatrix = []
+    rows = df.values.tolist()
+    for row in rows:
+        #nodeMatrix.append([i, float(data['x']), float(data['y']), float(data['demand'])])
+        nodeMatrix.append([i, row[0], row[1], row[2], row[3], row[4], row[5]])
+        i += 1
+    return [instanceName, int(capacity), nodeMatrix]
+
 def SimCWS(buckets):
 
-    files = []
-    spec_storage = Storage()
-    for i in buckets:
-        try:
-            files = spec_storage.list_objects(bucket  =i, prefix='Instances3/')
-            bucket = i 
-            print(i + ' availiable') 
-        except:
-            print(i + ' not availiable')
-    del files[0]
-    
-    runtime  = 'lithopscloud/ibmcf-python-v38:2021.01'
-    
-    #Read instances
-    fexec = lth.FunctionExecutor(runtime=runtime)
-    paramlist =[]
-    files = np.reshape(files, (int(len(files)/2),2))
-    for file in files:
-        paramlist.append([bucket, file[0], file[1]])
-    fexec.map(readInstances, paramlist)
-    instanceData = fexec.get_result()
-    fexec.clean()
+    if True == False:
+        files = []
+        spec_storage = Storage()
+        #'bucketlithops',
+        for i in buckets:
+            try:
+                files = spec_storage.list_objects(bucket  =i, prefix='instances/')
+                bucket = i 
+                print(i + ' available') 
+            except:
+                print(i + ' not available')
+        #files = spec_storage.list_objects(bucket  =bucket, prefix='instances/')
+        #print(files)
+        del files[0]
+
+        runtime  = 'lithopscloud/ibmcf-python-v38:2021.01' 
+        #Read instances
+        fexec = lth.FunctionExecutor(runtime=runtime)
+        #paramlist = list(it.product(['bucketlithops'],[vehCaps], files))
+        paramlist = [[bucket, vehCaps, file] for file in files]
+        fexec.map(readInstances, paramlist)
+        instanceData = fexec.get_result()
+        #fexec.plot(dst='lithops_plots/Read') 
+        fexec.clean()
+        #print(futs[0].status())
+        shutil.rmtree('./instancesmod')
+        os.mkdir('./instancesmod')
+        
     shutil.rmtree('./output')
     os.mkdir('./output')
 
-    shutil.rmtree('./instancesmod')
-    os.mkdir('./instancesmod')
-    for i in instanceData:
-        generateAdditionalData(i)
-    #CWS problem
-    fexec1 = lth.FunctionExecutor(runtime=runtime)
-    fexec1.map(testCWS, instanceData)
-    costsCWS = fexec1.get_result()
-    fexec1.plot(dst='lithops_plots/CWS') 
-    fexec1.clean()
-    dfCostsCWS = pd.DataFrame(costsCWS,columns = ['Instance', 'Capacity', 'Original'])
+    # Read csvs
+    filesmod = os.listdir('instancesmod/')
+    print(filesmod)
+    instanceData = []
+    for file in filesmod:
+        instanceData.append(readNewInstancesLocal(file))
 
+    isLocal = True
+    if isLocal:
+        pool =mp.Pool(processes=12)
+        costsCWS = pool.map(testCWS, instanceData)
+        dfCostsCWS = pd.DataFrame(costsCWS,columns = ["Instance", "Capacity", "Original"])
+    else:
+        #CWS problem
+        fexec1 = lth.FunctionExecutor(runtime=runtime)
+        fexec1.map(testCWS, instanceData)
+        costsCWS = fexec1.get_result()
+        fexec1.plot(dst='lithops_plots/CWS') 
+        fexec1.clean()
+
+    print(dfCostsCWS)
     #SRGCWS problem
     #Data
     nIterations = [100]

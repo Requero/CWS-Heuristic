@@ -87,36 +87,59 @@ def generateColumns(dfsCostsSRGCWS, dfCostsCWS):
     dataframe['gap10'] = 100*(dataframe['StarRCU'] - dataframe['Original'])/dataframe['Original']
     return dataframe.reset_index()
 
-def VRP_SRCWS(buckets):
-            
-    files = []
-    spec_storage = Storage()
-    #'bucketlithops',
-    for i in buckets:
-        try:
-            files = spec_storage.list_objects(bucket  =i, prefix='instances/')
-            bucket = i 
-            print(i + ' available') 
-        except:
-            print(i + ' not available')
-    #files = spec_storage.list_objects(bucket  =bucket, prefix='instances/')
-    #print(files)
-    del files[0]
+def readNewInstancesLocal(fileName):
+    #bucket_name, vehCaps, file
+    df = pd.read_csv('instancesmod/'+fileName)
+    instanceName = fileName.split('_')[0]
+    capacity = fileName.split('_')[1].split('.')[0]
+    #fileobject = storage.get_object(params[0], params[2]['Key'], stream=True)
+    #instanceName = str(params[2]['Key']).replace('instances/', '').replace('_input_nodes.txt', '')
+    #dfPoints=pd.read_csv(fileobject, sep='\t', names=['x', 'y', 'demand'])
+    i = 0
+    nodeMatrix = []
+    rows = df.values.tolist()
+    for row in rows:
+        #nodeMatrix.append([i, float(data['x']), float(data['y']), float(data['demand'])])
+        nodeMatrix.append([i, row[0], row[1], row[2], row[3], row[4], row[5]])
+        i += 1
+    return [instanceName, int(capacity), nodeMatrix]
 
-    runtime  = 'lithopscloud/ibmcf-python-v38:2021.01' 
-    #Read instances
-    fexec = lth.FunctionExecutor(runtime=runtime)
-    #paramlist = list(it.product(['bucketlithops'],[vehCaps], files))
-    paramlist = [[bucket, vehCaps, file] for file in files]
-    fexec.map(readInstances, paramlist)
-    instanceData = fexec.get_result()
-    #fexec.plot(dst='lithops_plots/Read') 
-    fexec.clean()
-    #print(futs[0].status())
+def VRP_SRCWS(buckets):
+    if True == False:
+        files = []
+        spec_storage = Storage()
+        #'bucketlithops',
+        for i in buckets:
+            try:
+                files = spec_storage.list_objects(bucket  =i, prefix='instances/')
+                bucket = i 
+                print(i + ' available') 
+            except:
+                print(i + ' not available')
+        #files = spec_storage.list_objects(bucket  =bucket, prefix='instances/')
+        #print(files)
+        del files[0]
+
+        runtime  = 'lithopscloud/ibmcf-python-v38:2021.01' 
+        #Read instances
+        fexec = lth.FunctionExecutor(runtime=runtime)
+        #paramlist = list(it.product(['bucketlithops'],[vehCaps], files))
+        paramlist = [[bucket, vehCaps, file] for file in files]
+        fexec.map(readInstances, paramlist)
+        instanceData = fexec.get_result()
+        #fexec.plot(dst='lithops_plots/Read') 
+        fexec.clean()
+        #print(futs[0].status())
 
     shutil.rmtree('./output')
     os.mkdir('./output')
-    
+
+    filesmod = os.listdir('instancesmod/')
+    print(filesmod)
+    instances = []
+    for file in filesmod:
+        instances.append(readNewInstancesLocal(file))
+    print(instances)
     #CWS problem
     fexec1 = lth.FunctionExecutor(runtime=runtime)
     fexec1.map(testCWS, instanceData)
