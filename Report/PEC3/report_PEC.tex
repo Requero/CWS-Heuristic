@@ -325,25 +325,24 @@ En general la mayoría de las instancias de Kelly1 a Kelly16 presentan menores c
 A partir de los resultados obtenidos podemos concluir que:
 
 \begin{itemize}
-\item 
+	\item El algoritmo desarrollado sufre un deterioro en rendimiento importante cuando es puesto a prueba con instancias estocásticas. Esto implica que nuestro algoritmo está sesgado por nuestras instancias deterministas, casos base.
+	En este caso es necesario hacer varias cosas:
+		\begin{itemize}
+		\item Revisar los casos base propuestos y ver si todos prueban el mismo tipo de cosas y necesitan más diversidad.
+		\item Revisar que el algoritmo esté bien diseñado y funcione como debería. Esto está enlazado con la creación de unos buenos casos base.
+		\item Revisar que la generación de instancias estocásticas este bien diseñada y tenga sentido.
+		\end{itemize}
+	\item Probar con valores Beta mayores o menores de manera que forcemos comportamientos más explorativos o avariciosos.
+	\item El uso de la nube para hacer pruebas nos ha permitido más flexibilidad para trabajar con este problema.
 \end{itemize}
 
-Como trabajo futuro proponemos: 
-
+Como trabajo futuro proponemos:
 \begin{itemize}
-\item Analizar si con distintas funciones de coste (o savings) se generan mejores resultados.
-\item Estudiar si con un mayor numero de iteraciones, se mejoran de manera significativa los resultados obtenidos y en que punto las soluciones dejan de mejorar.
-\item Explorar para diferentes valores de $\beta$ entre 0.4 y 0.6, si las soluciones mejoran.
-\item Aplicar diferentes métodos de splitting en función de la topología de la red.
-\item Determinar que areas de la ejecución pueden ser paralelizadas para mejorar el rendimiento de la ejecución del algoritmo.
+	\item Estudiar un enfoque diferente a este problema. En vez de usar el heurístico de CWS modificado, probar otro tipo de heurísticos, algoritmos genéticos, etc. Esto puede darnos un nuevo punto de vista y ver fallos de diseño que hemos podido no ver al basarnos en trabajos pasados.
+	\item Estudiar una retroalimentación directa de la simulación para utilizar con nuevas técnicas metaheurísticas.
+	\item Realizar un trabajo exhaustivo y detallado para generar las instancias de prueba y así ayudar a que el nuevo enfoque del problema este bien diseñado y el rendimiento determinista y estocástico sea similar.
 \end{itemize}
 
  \end{enumerate}
-
-\pagestyle{empty}
-\begin{landscape}
-
-\end{landscape}
-\pagestyle{plain}
 
 \end{document}
